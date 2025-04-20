@@ -56,34 +56,37 @@ const ButtonConnectWallet = () => {
         return (
           <div className="flex items-center gap-3">
             <div className="relative group">
-              {/* <button
+              <button
                 onClick={openChainModal}
                 type="button"
-                className="flex items-center justify-center space-x-1 px-3 py-2 rounded-3xl bg-blue-500 text-[#07094d] hover:opacity-90 font-medium transition-all"
+                className="flex items-center justify-start  px-1 py-1 hover:cursor-pointer rounded-3xl bg-white border-2 border-blue-500 hover:opacity-90 font-medium transition-all"
               >
                 {chain.hasIcon && chain.iconUrl && (
                   <img
                     src={chain.iconUrl || "/placeholder.svg"}
                     alt={chain.name || "Chain icon"}
-                    className="w-4 h-4 rounded-full mr-1"
+                    className="w-8 h-8 rounded-full "
                     style={{ background: chain.iconBackground }}
                   />
                 )}
-                <span>{chain.name}</span>
                 <ChevronDown className="w-4 h-4 ml-1 opacity-70" />
-              </button> */}
+              </button>
             </div>
 
             <div className="relative group">
-              <button
-                onClick={openAccountModal}
-                type="button"
-                className="flex items-center justify-center space-x-1 px-3 py-2 rounded-3xl bg-blue-500 text-[#07094d] hover:opacity-90 font-medium transition-al"
-              >
-                <span className="truncate max-w-[120px]">
-                  {account.displayName}
-                </span>
-              </button>
+              <div className="border-2 border-blue-500 rounded-full">
+                <button
+                  onClick={() => {
+                    openAccountModal();
+                  }}
+                  type="button"
+                  className="flex items-center justify-center space-x-1 px-3 py-2 rounded-3xl hover:cursor-pointer bg-white text-[#07094d] hover:opacity-90 font-medium transition-al"
+                >
+                  <span className="truncate max-w-[120px]">
+                    {account.displayName}
+                  </span>
+                </button>
+              </div>
             </div>
           </div>
         );
