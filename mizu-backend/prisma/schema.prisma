@@ -6,14 +6,13 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
-
 model NFT {
   id           Int      @id @default(autoincrement())
   title        String
@@ -33,9 +32,9 @@ model NFT {
 
 model Cart {
   id        Int      @id @default(autoincrement())
-  userId    String   // ID user (bisa dari auth system)
+  userId    String   // ID user (Ambil dari wallet address)
   nftId     Int
-  quantity  Int      @default(1)
+  // quantity  Int      @default(1)
   createdAt DateTime @default(now())
 
   nft       NFT      @relation(fields: [nftId], references: [id])
