@@ -19,12 +19,12 @@ interface RootLayoutProps {
 }
 
 export const metadata: Metadata = {
-  title: "Caer Finance",
-  description: "Cross-chain borrowing platform",
+  title: "Mizu Finance",
+  description: "Platform to buy and sell NFTs",
   icons: {
     icon: [
-      { url: "./caer.png", type: "image/png" },
-      { url: "/caer.png", type: "image/png" },
+      { url: "./mizu-finance.png", type: "image/png" },
+      { url: "/mizu-finance.png", type: "image/png" },
       { url: "/favicon.ico", type: "image/x-icon" },
     ],
     apple: [{ url: "/caer.png", type: "image/png" }],
