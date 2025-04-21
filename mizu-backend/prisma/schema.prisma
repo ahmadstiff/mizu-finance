@@ -1,0 +1,50 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model NFT {
+  id           Int      @id @default(autoincrement())
+  title        String
+  description  String
+  owner        String
+  nftId        String   // ID dari Smart Contract
+  nftAddress   String
+  imageUrl     String
+  price        Float
+  currency     String   // Contoh: 'ETH', 'MATIC', 'USDC'
+  status       Status   @default(LISTED)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  carts        Cart[]   // Relasi ke Cart
+}
+
+model Cart {
+  id        Int      @id @default(autoincrement())
+  userId    String   // ID user (bisa dari auth system)
+  nftId     Int
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+
+  nft       NFT      @relation(fields: [nftId], references: [id])
+}
+
+enum Status {
+  LISTED
+  UNLISTED
+  SOLD_OUT
+  PENDING
+}
+
