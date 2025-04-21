@@ -1,88 +1,107 @@
 import prisma from '../prisma/client.js';
 
-// Get all NFTs
+// Get all NFTs (with optional search)
 export const getAllNFTs = async (req, res) => {
-  try {
-    const nfts = await prisma.nFT.findMany();
-    res.json(nfts);
-  } catch (err) {
-    console.error('Error fetching NFTs:', err);
-
-    let message = 'Failed to fetch NFTs';
-
-    if (err instanceof Prisma.PrismaClientKnownRequestError) {
-      message += ` (Code: ${err.code})`;
+    const { search } = req.query;
+  
+    try {
+      const nfts = await prisma.nFT.findMany({
+        where: search
+          ? {
+              OR: [
+                { title: { contains: search, mode: 'insensitive' } },
+                { description: { contains: search, mode: 'insensitive' } },
+                { owner: { contains: search, mode: 'insensitive' } },
+              ]
+            }
+          : undefined,
+      });
+  
+      res.json(nfts);
+    } catch (err) {
+      console.error('Error fetching NFTs:', err);
+      const message =
+        err instanceof Prisma.PrismaClientKnownRequestError
+          ? `Failed to fetch NFTs (Code: ${err.code})`
+          : 'Failed to fetch NFTs';
+  
+      res.status(500).json({ error: message, details: err.message });
     }
-
-    res.status(500).json({ error: message, details: err.message });
-  }
-};
-
-// Create new NFT
-export const createNFT = async (req, res) => {
-  const { title, description, owner, nftId, nftAddress, imageUrl, price, currency, status } = req.body;
-
-  // Validasi sederhana
-  if (!title || !description || !owner || !nftId || !nftAddress || !imageUrl || !price || !currency || !status) {
-    return res.status(400).json({ error: 'Missing required fields' });
-  }
-
-  try {
-    const newNFT = await prisma.nFT.create({
-      data: {
-        title,
-        description,
-        owner,
-        nftId,
-        nftAddress,
-        imageUrl,
-        price,
-        currency,
-        status,
-      },
-    });
-
-    res.status(201).json(newNFT);
-  } catch (err) {
-    console.error('Error creating NFT:', err);
-
-    let statusCode = 500;
-    let message = 'Failed to create NFT';
-
-    if (err instanceof Prisma.PrismaClientKnownRequestError) {
-      // Prisma error code documentation: https://www.prisma.io/docs/reference/api-reference/error-reference
-      switch (err.code) {
-        case 'P2002': // Unique constraint failed
-          statusCode = 409;
-          message = 'NFT with this ID or address already exists (duplicate key)';
-          break;
-        case 'P2003': // Foreign key constraint failed
-          statusCode = 400;
-          message = 'Invalid foreign key reference';
-          break;
-        default:
-          message += ` (Code: ${err.code})`;
-      }
-    }
-
-    res.status(statusCode).json({ error: message, details: err.message });
-  }
-};
-
-// edit nft
-export const updateNFT = async (req, res) => {
+  };
+  
+  // Get NFT by ID
+  export const getNFTById = async (req, res) => {
     const { id } = req.params;
-    const {
-      title,
-      description,
-      owner,
-      nftId,
-      nftAddress,
-      imageUrl,
-      price,
-      currency,
-      status
-    } = req.body;
+  
+    try {
+      const nft = await prisma.nFT.findUnique({
+        where: { id: parseInt(id) },
+      });
+  
+      if (!nft) {
+        return res.status(404).json({ error: 'NFT not found' });
+      }
+  
+      res.json(nft);
+    } catch (err) {
+      console.error('Error fetching NFT by ID:', err);
+      res.status(500).json({ error: 'Failed to fetch NFT by ID', details: err.message });
+    }
+  };
+  
+  // Create new NFT
+  export const createNFT = async (req, res) => {
+    const { title, description, owner, nftId, nftAddress, imageUrl, price, currency, status } = req.body;
+  
+    if (!title || !description || !owner || !nftId || !nftAddress || !imageUrl || !price || !currency || !status) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+  
+    try {
+      const newNFT = await prisma.nFT.create({
+        data: {
+          title,
+          description,
+          owner,
+          nftId,
+          nftAddress,
+          imageUrl,
+          price,
+          currency,
+          status,
+        },
+      });
+  
+      res.status(201).json(newNFT);
+    } catch (err) {
+      console.error('Error creating NFT:', err);
+  
+      let statusCode = 500;
+      let message = 'Failed to create NFT';
+  
+      if (err instanceof Prisma.PrismaClientKnownRequestError) {
+        switch (err.code) {
+          case 'P2002':
+            statusCode = 409;
+            message = 'NFT with this ID or address already exists (duplicate key)';
+            break;
+          case 'P2003':
+            statusCode = 400;
+            message = 'Invalid foreign key reference';
+            break;
+          default:
+            message += ` (Code: ${err.code})`;
+        }
+      }
+  
+      res.status(statusCode).json({ error: message, details: err.message });
+    }
+  };
+  
+  // Update NFT
+  export const updateNFT = async (req, res) => {
+    const { id } = req.params;
+    const { title, description, owner, nftId, nftAddress, imageUrl, price, currency, status } = req.body;
   
     try {
       const updatedNFT = await prisma.nFT.update({
@@ -117,7 +136,7 @@ export const updateNFT = async (req, res) => {
             break;
           case 'P2002':
             statusCode = 409;
-            message = 'Duplicate unique field value (e.g., nftId or nftAddress already used)';
+            message = 'Duplicate unique field value';
             break;
           default:
             message += ` (Code: ${err.code})`;
@@ -128,6 +147,7 @@ export const updateNFT = async (req, res) => {
     }
   };
   
+  // Delete NFT
   export const deleteNFT = async (req, res) => {
     const { id } = req.params;
   
@@ -157,4 +177,3 @@ export const updateNFT = async (req, res) => {
       res.status(statusCode).json({ error: message, details: err.message });
     }
   };
-  

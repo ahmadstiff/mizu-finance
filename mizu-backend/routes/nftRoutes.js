@@ -1,6 +1,7 @@
 import express from 'express';
 import {
   getAllNFTs,
+  getNFTById,
   createNFT,
   updateNFT,
   deleteNFT
@@ -9,8 +10,9 @@ import {
 const router = express.Router();
 
 router.get('/', getAllNFTs);
+router.get('/:id', getNFTById);
 router.post('/', createNFT);
-router.put('/:id', updateNFT);    // ⬅️ Update NFT
-router.delete('/:id', deleteNFT); // ⬅️ Delete NFT
+router.put('/:id', updateNFT);
+router.delete('/:id', deleteNFT);
 
 export default router;
