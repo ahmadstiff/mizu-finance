@@ -1,11 +1,14 @@
 {
   "name": "mizu-backend",
   "version": "1.0.0",
-  "main": "server.js",
+  "main": "index.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon server.js"
+    "dev": "nodemon index.js",
+    "build": "prisma generate",
+    "start": "node index.js",
+    "vercel-build": "npm run build"
   },
   "keywords": [],
   "author": "",
