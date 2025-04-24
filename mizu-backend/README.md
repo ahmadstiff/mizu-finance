@@ -98,6 +98,21 @@ Request Body:
 }
 ```
 
+Required Fields:
+
+- `title`
+- `description`
+- `owner`
+- `nftId`
+- `nftAddress`
+- `thumbnail`
+- `imageUrl`
+- `price`
+- `currency`
+- `category`
+
+Note: `status` is optional and defaults to "LISTED" if not provided.
+
 #### Update NFT
 
 ```
@@ -180,6 +195,11 @@ Request Body:
 }
 ```
 
+Required Fields:
+
+- `userId`
+- `nftId`
+
 #### Delete Cart Item
 
 ```
@@ -208,17 +228,17 @@ The API uses standard HTTP status codes and returns error messages in the follow
 
 Common status codes:
 
-- 400: Bad Request
-- 404: Not Found
-- 409: Conflict
+- 400: Bad Request (Missing required fields, invalid data)
+- 404: Not Found (Resource not found)
+- 409: Conflict (Duplicate entry, unique constraint violation)
 - 500: Internal Server Error
 
 ## Prisma Error Codes
 
 The API uses Prisma as the ORM, and some errors include Prisma-specific error codes:
 
-- P2002: Unique constraint violation
-- P2003: Foreign key constraint violation
+- P2002: Unique constraint violation (e.g., duplicate nftId)
+- P2003: Foreign key constraint violation (e.g., invalid nftId in cart)
 - P2025: Record not found
 
 ## Rate Limiting

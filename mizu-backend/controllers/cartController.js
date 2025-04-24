@@ -23,19 +23,18 @@ export const getCartByUser = async (req, res) => {
 
 // Add to cart
 export const addToCart = async (req, res) => {
-  const { userId, nftId, quantity } = req.body;
+  const { userId, nftId } = req.body;
 
   // Validasi sederhana
-  if (!userId || !nftId || !quantity) {
-    return res.status(400).json({ error: 'Missing required fields: userId, nftId, quantity' });
+  if (!userId || !nftId) {
+    return res.status(400).json({ error: 'Missing required fields: userId, nftId' });
   }
 
   try {
     const cartItem = await prisma.cart.create({
       data: {
         userId,
-        nftId,
-        quantity
+        nftId
       }
     });
     res.status(201).json(cartItem);
@@ -68,33 +67,32 @@ export const addToCart = async (req, res) => {
 
 // Delete cart item by ID
 export const deleteCartItem = async (req, res) => {
-    const { id } = req.params;
-  
-    try {
-      await prisma.cart.delete({
-        where: {
-          id: parseInt(id),
-        },
-      });
-  
-      res.json({ message: 'Cart item deleted successfully' });
-    } catch (err) {
-      console.error('Error deleting cart item:', err);
-  
-      let statusCode = 500;
-      let message = 'Failed to delete cart item';
-  
-      if (err instanceof Prisma.PrismaClientKnownRequestError) {
-        if (err.code === 'P2025') {
-          // Record not found
-          statusCode = 404;
-          message = 'Cart item not found';
-        } else {
-          message += ` (Code: ${err.code})`;
-        }
+  const { id } = req.params;
+
+  try {
+    await prisma.cart.delete({
+      where: {
+        id: parseInt(id),
+      },
+    });
+
+    res.json({ message: 'Cart item deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting cart item:', err);
+
+    let statusCode = 500;
+    let message = 'Failed to delete cart item';
+
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (err.code === 'P2025') {
+        // Record not found
+        statusCode = 404;
+        message = 'Cart item not found';
+      } else {
+        message += ` (Code: ${err.code})`;
       }
-  
-      res.status(statusCode).json({ error: message, details: err.message });
     }
-  };
-  
+
+    res.status(statusCode).json({ error: message, details: err.message });
+  }
+};
