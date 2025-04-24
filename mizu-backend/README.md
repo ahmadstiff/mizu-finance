@@ -35,10 +35,14 @@ Response:
     "owner": "0x123...",
     "nftId": "123",
     "nftAddress": "0x456...",
+    "thumbnail": "https://example.com/thumbnail.jpg",
     "imageUrl": "https://example.com/image.jpg",
-    "price": 100,
+    "price": "100",
     "currency": "ETH",
-    "status": "AVAILABLE"
+    "category": "Art",
+    "status": "LISTED",
+    "createdAt": "2024-04-24T08:00:00Z",
+    "updatedAt": "2024-04-24T08:00:00Z"
   }
 ]
 ```
@@ -59,10 +63,14 @@ Response:
   "owner": "0x123...",
   "nftId": "123",
   "nftAddress": "0x456...",
+  "thumbnail": "https://example.com/thumbnail.jpg",
   "imageUrl": "https://example.com/image.jpg",
-  "price": 100,
+  "price": "100",
   "currency": "ETH",
-  "status": "AVAILABLE"
+  "category": "Art",
+  "status": "LISTED",
+  "createdAt": "2024-04-24T08:00:00Z",
+  "updatedAt": "2024-04-24T08:00:00Z"
 }
 ```
 
@@ -81,10 +89,12 @@ Request Body:
   "owner": "0x123...",
   "nftId": "123",
   "nftAddress": "0x456...",
+  "thumbnail": "https://example.com/thumbnail.jpg",
   "imageUrl": "https://example.com/image.jpg",
-  "price": 100,
+  "price": "100",
   "currency": "ETH",
-  "status": "AVAILABLE"
+  "category": "Art",
+  "status": "LISTED"
 }
 ```
 
@@ -103,10 +113,12 @@ Request Body:
   "owner": "0x123...",
   "nftId": "123",
   "nftAddress": "0x456...",
+  "thumbnail": "https://example.com/thumbnail.jpg",
   "imageUrl": "https://example.com/image.jpg",
-  "price": 150,
+  "price": "150",
   "currency": "ETH",
-  "status": "SOLD"
+  "category": "Art",
+  "status": "SOLD_OUT"
 }
 ```
 
@@ -131,8 +143,8 @@ Response:
   {
     "id": 1,
     "userId": "user123",
-    "nftId": 1,
-    "quantity": 1,
+    "nftId": "123",
+    "createdAt": "2024-04-24T08:00:00Z",
     "nft": {
       "id": 1,
       "title": "NFT Title",
@@ -140,10 +152,14 @@ Response:
       "owner": "0x123...",
       "nftId": "123",
       "nftAddress": "0x456...",
+      "thumbnail": "https://example.com/thumbnail.jpg",
       "imageUrl": "https://example.com/image.jpg",
-      "price": 100,
+      "price": "100",
       "currency": "ETH",
-      "status": "AVAILABLE"
+      "category": "Art",
+      "status": "LISTED",
+      "createdAt": "2024-04-24T08:00:00Z",
+      "updatedAt": "2024-04-24T08:00:00Z"
     }
   }
 ]
@@ -160,8 +176,7 @@ Request Body:
 ```json
 {
   "userId": "user123",
-  "nftId": 1,
-  "quantity": 1
+  "nftId": "123"
 }
 ```
 
@@ -170,6 +185,15 @@ Request Body:
 ```
 DELETE /api/cart/:id
 ```
+
+## Status Values
+
+The `status` field in NFTs can have one of the following values:
+
+- `LISTED`: NFT is available for purchase
+- `UNLISTED`: NFT is not available for purchase
+- `SOLD_OUT`: NFT has been sold
+- `PENDING`: NFT is in a pending state
 
 ## Error Responses
 

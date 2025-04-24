@@ -20,6 +20,7 @@ model NFT {
   owner        String
   nftId        String   @unique // ID dari Smart Contract
   nftAddress   String
+  thumbnail    String
   imageUrl     String
   price        String
   currency     String   // Contoh: 'ETH', 'MATIC', 'USDC'
