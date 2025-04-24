@@ -18,26 +18,26 @@ model NFT {
   title        String
   description  String
   owner        String
-  nftId        String   // ID dari Smart Contract
+  nftId        String   @unique // ID dari Smart Contract
   nftAddress   String
   imageUrl     String
-  price        Float
+  price        String
   currency     String   // Contoh: 'ETH', 'MATIC', 'USDC'
+  category     String
   status       Status   @default(LISTED)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  carts        Cart[]   // Relasi ke Cart
+  carts        Cart[]   @relation("NFTToCart")
 }
 
 model Cart {
   id        Int      @id @default(autoincrement())
-  userId    String   // ID user (Ambil dari wallet address)
-  nftId     Int
-  // quantity  Int      @default(1)
+  userId    String
+  nftId     String
   createdAt DateTime @default(now())
 
-  nft       NFT      @relation(fields: [nftId], references: [id])
+  nft       NFT      @relation("NFTToCart", fields: [nftId], references: [nftId])
 }
 
 enum Status {
