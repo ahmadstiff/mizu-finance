@@ -18,10 +18,10 @@ function AssetCard() {
   
           <div className="bg-black text-white p-4 rounded-b-xl flex flex-col gap-2">
             <div className="flex justify-between">
-              <span className="bg-green-500 text-white px-2 py-1 text-sm rounded-full">
+              <span className="bg-green-500 text-white px-2 py-1 text-sm rounded-md">
                 Non Alcoholic
               </span>
-              <span className="bg-white text-black px-2 py-1 text-sm rounded-full">
+              <span className="bg-white text-black px-2 py-1 text-sm rounded-md">
                 Collectibles
               </span>
             </div>
