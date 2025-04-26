@@ -6,6 +6,7 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { RainbowKitProvider, lightTheme } from "@rainbow-me/rainbowkit";
 import { config } from "@/lib/wagmi";
 import Navbar from "@/components/navbar/navbar";
+import { Toaster } from "sonner";
 
 export default function ClientProviders({
   children,
@@ -30,6 +31,7 @@ export default function ClientProviders({
             <Navbar />
           </div>
           <div className="mt-5 relative z-10">{children}</div>
+          <Toaster />
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
