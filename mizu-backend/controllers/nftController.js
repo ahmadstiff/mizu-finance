@@ -77,6 +77,7 @@ export const createNFT = async (req, res) => {
         description,
         owner,
         nftId,
+        tags,
         nftAddress,
         thumbnail,
         imageUrl,
@@ -137,6 +138,7 @@ export const updateNFT = async (req, res) => {
         nftId,
         nftAddress,
         price,
+
         category,
         status,
       },
