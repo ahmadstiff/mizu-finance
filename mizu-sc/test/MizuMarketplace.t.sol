@@ -16,9 +16,7 @@ contract DummyERC721 is IERC721 {
     mapping(uint256 => address) private _tokenApprovals;
     mapping(address => mapping(address => bool)) private _operatorApprovals;
 
-    function supportsInterface(
-        bytes4 interfaceId
-    ) external pure override returns (bool) {
+    function supportsInterface(bytes4 interfaceId) external pure override returns (bool) {
         return interfaceId == type(IERC721).interfaceId;
     }
 
@@ -39,58 +37,35 @@ contract DummyERC721 is IERC721 {
         _tokenApprovals[tokenId] = to;
     }
 
-    function setApprovalForAll(
-        address operator,
-        bool approved
-    ) external override {
+    function setApprovalForAll(address operator, bool approved) external override {
         _operatorApprovals[msg.sender][operator] = approved;
     }
 
-    function getApproved(
-        uint256 tokenId
-    ) external view override returns (address) {
+    function getApproved(uint256 tokenId) external view override returns (address) {
         return _tokenApprovals[tokenId];
     }
 
-    function isApprovedForAll(
-        address owner,
-        address operator
-    ) external view override returns (bool) {
+    function isApprovedForAll(address owner, address operator) external view override returns (bool) {
         return _operatorApprovals[owner][operator];
     }
 
-    function _transfer(
-        address from,
-        address to,
-        uint256 tokenId
-    ) internal virtual {
+    function _transfer(address from, address to, uint256 tokenId) internal virtual {
         require(_owners[tokenId] == from, "Not owner");
         _owners[tokenId] = to;
         _balances[from] -= 1;
         _balances[to] += 1;
     }
 
-    function _checkOnERC721Received(
-        address from,
-        address to,
-        uint256 tokenId,
-        bytes memory data
-    ) private returns (bool) {
+    function _checkOnERC721Received(address from, address to, uint256 tokenId, bytes memory data)
+        private
+        returns (bool)
+    {
         if (to.code.length > 0) {
-            try
-                IERC721Receiver(to).onERC721Received(
-                    msg.sender,
-                    from,
-                    tokenId,
-                    data
-                )
-            returns (bytes4 retval) {
+            try IERC721Receiver(to).onERC721Received(msg.sender, from, tokenId, data) returns (bytes4 retval) {
                 return retval == IERC721Receiver.onERC721Received.selector;
             } catch (bytes memory reason) {
                 if (reason.length == 0) {
-                    revert(
-                        "ERC721: transfer to non ERC721Receiver implementer"
-                    );
+                    revert("ERC721: transfer to non ERC721Receiver implementer");
                 } else {
                     /// @solidity memory-safe-assembly
                     assembly {
@@ -103,118 +78,82 @@ contract DummyERC721 is IERC721 {
         }
     }
 
-    function transferFrom(
-        address from,
-        address to,
-        uint256 tokenId
-    ) external override {
+    function transferFrom(address from, address to, uint256 tokenId) external override {
         _transfer(from, to, tokenId);
     }
 
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 tokenId,
-        bytes calldata data
-    ) external override {
+    function safeTransferFrom(address from, address to, uint256 tokenId, bytes calldata data) external override {
         _transfer(from, to, tokenId);
-        require(
-            _checkOnERC721Received(from, to, tokenId, data),
-            "ERC721: transfer to non ERC721Receiver implementer"
-        );
+        require(_checkOnERC721Received(from, to, tokenId, data), "ERC721: transfer to non ERC721Receiver implementer");
     }
 
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 tokenId
-    ) external override {
+    function safeTransferFrom(address from, address to, uint256 tokenId) external override {
         _transfer(from, to, tokenId);
-        require(
-            _checkOnERC721Received(from, to, tokenId, ""),
-            "ERC721: transfer to non ERC721Receiver implementer"
-        );
+        require(_checkOnERC721Received(from, to, tokenId, ""), "ERC721: transfer to non ERC721Receiver implementer");
     }
 }
 
 contract DummyDLT is IDLT {
-    mapping(address => mapping(uint256 => mapping(uint256 => uint256)))
-        public balances;
+    mapping(address => mapping(uint256 => mapping(uint256 => uint256))) public balances;
 
     function setApprovalForAll(address, bool) external override {}
 
-    function approve(
-        address,
-        uint256,
-        uint256,
-        uint256
-    ) external pure override returns (bool) {
+    function approve(address, uint256, uint256, uint256) external pure override returns (bool) {
         return true;
     }
 
-    function allowance(
-        address,
-        address,
-        uint256,
-        uint256
-    ) external pure override returns (uint256) {
+    function allowance(address, address, uint256, uint256) external pure override returns (uint256) {
         return 0;
     }
 
-    function isApprovedForAll(
-        address,
-        address
-    ) external pure override returns (bool) {
+    function isApprovedForAll(address, address) external pure override returns (bool) {
         return true;
     }
 
-    function subBalanceOf(
-        address account,
-        uint256 mainId,
-        uint256 subId
-    ) external view override returns (uint256) {
+    function subBalanceOf(address account, uint256 mainId, uint256 subId) external view override returns (uint256) {
         return balances[account][mainId][subId];
     }
 
-    function balanceOfBatch(
-        address[] calldata,
-        uint256[] calldata,
-        uint256[] calldata
-    ) external pure override returns (uint256[] calldata) {
+    function balanceOfBatch(address[] calldata, uint256[] calldata, uint256[] calldata)
+        external
+        pure
+        override
+        returns (uint256[] calldata)
+    {
         revert("not implemented");
     }
 
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 mainId,
-        uint256 subId,
-        uint256 amount,
-        bytes calldata
-    ) external override returns (bool) {
+    function safeTransferFrom(address from, address to, uint256 mainId, uint256 subId, uint256 amount, bytes calldata)
+        external
+        override
+        returns (bool)
+    {
         require(balances[from][mainId][subId] >= amount, "Insufficient");
         balances[from][mainId][subId] -= amount;
         balances[to][mainId][subId] += amount;
         return true;
     }
 
-    function setBalance(
-        address account,
-        uint256 mainId,
-        uint256 subId,
-        uint256 amount
-    ) external {
+    function setBalance(address account, uint256 mainId, uint256 subId, uint256 amount) external {
         balances[account][mainId][subId] = amount;
     }
 
-    function mint(
-        address to,
-        uint256 mainId,
-        uint256 subId,
-        uint256 amount
-    ) external {
+    function mint(address to, uint256 mainId, uint256 subId, uint256 amount) external {
         balances[to][mainId][subId] += amount;
     }
+}
+
+interface ISupraSValueFeed {
+    struct derivedData {
+        int256 roundDifference;
+        uint256 derivedPrice;
+        uint256 decimals;
+    }
+
+    function getDerivedSvalue(uint256 pair_id_1, uint256 pair_id_2, uint256 operation)
+        external
+        view
+        returns (derivedData memory);
 }
 
 contract MizuMarketplaceTest is Test {
@@ -228,6 +167,7 @@ contract MizuMarketplaceTest is Test {
     address buyer1 = makeAddr("buyer1");
 
     function setUp() public {
+        vm.createSelectFork("https://devnet.dplabs-internal.com/", 18644280);
         usdc = new MockUSDC();
         dlt = new DummyDLT();
         mizu = new MizuMarketplace(address(dlt), address(usdc));
@@ -350,14 +290,8 @@ contract MizuMarketplaceTest is Test {
         mizu.makeOffer(0, offerAmount, pricePerUnit, 1 days);
         vm.stopPrank();
 
-        (
-            address offerBuyer,
-            uint256 listingId,
-            uint256 amount,
-            uint256 price,
-            uint256 expiration,
-            bool active
-        ) = mizu.offers(0);
+        (address offerBuyer, uint256 listingId, uint256 amount, uint256 price, uint256 expiration, bool active) =
+            mizu.offers(0);
 
         assertEq(offerBuyer, buyer);
         assertEq(listingId, 0);
@@ -388,13 +322,10 @@ contract MizuMarketplaceTest is Test {
         vm.prank(user);
         mizu.acceptOffer(0);
 
-        assertEq(
-            dlt.subBalanceOf(buyer, 1, 0),
-            buyerFragmentsBefore + offerAmount
-        );
+        assertEq(dlt.subBalanceOf(buyer, 1, 0), buyerFragmentsBefore + offerAmount);
         assertEq(usdc.balanceOf(user), sellerBalanceBefore + totalPrice);
 
-        (, , , , , bool active) = mizu.offers(0);
+        (,,,,, bool active) = mizu.offers(0);
         assertFalse(active);
     }
 
@@ -524,4 +455,13 @@ contract MizuMarketplaceTest is Test {
         mizu.listERC6960(1, 0, 0, 2e6, 100e6);
         vm.stopPrank();
     }
+
+    function testPriceFeed() public {
+        ISupraSValueFeed priceFeed = ISupraSValueFeed(0xf08A9C60bbF1E285BF61744b17039c69BcD6287d);
+        // ISupraSValueFeed priceFeed = ISupraSValueFeed(0xF439Cea7B2ec0338Ee7EC16ceAd78C9e1f47bc4c);
+        console.log(priceFeed.getDerivedSvalue(1, 89, 0).roundDifference);
+        console.log(priceFeed.getDerivedSvalue(1, 89, 0).derivedPrice);
+        console.log(priceFeed.getDerivedSvalue(1, 89, 0).decimals);
+    }
 }
+// 0xf08A9C60bbF1E285BF61744b17039c69BcD6287d
