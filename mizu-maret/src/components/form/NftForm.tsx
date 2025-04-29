@@ -22,6 +22,7 @@ const initialFormData: NftFormData = {
   owner: "",
   nftId: "",
   nftAddress: "",
+  tags: "",
   thumbnail: "",
   imageUrl: "",
   price: "",
@@ -113,12 +114,33 @@ export default function NftForm() {
         body: JSON.stringify(formData),
       });
 
-      if (!res.ok) throw new Error("Failed to send data");
+      const data = await res.json().catch((jsonErr) => {
+        console.error("Failed to parse JSON from response:", jsonErr);
+        return null;
+      });
+
+      if (!res.ok) {
+        console.error("Server responded with an error:", {
+          status: res.status,
+          statusText: res.statusText,
+          body: data,
+        });
+        const errorMessage = data?.message || "Failed to send data to server.";
+        throw new Error(errorMessage);
+      }
+
+      console.log("Success response:", data);
       alert("NFT added successfully!");
       setFormData(initialFormData);
     } catch (error) {
-      console.error("Error:", error);
-      alert("There was an error submitting the data.");
+      console.error("Submission caught error:", error);
+
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Unknown error occurred during submission.";
+
+      alert(`Submission failed: ${message}`);
     }
   };
 
@@ -162,6 +184,19 @@ export default function NftForm() {
           placeholder="NFT Address"
         />
       </div>
+      <Select
+        value={formData.tags}
+        onValueChange={(v) => handleSelectChange("tags", v)}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder="Select Tags" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="art">Art</SelectItem>
+          <SelectItem value="music">Music</SelectItem>
+          <SelectItem value="collectible">Collectible</SelectItem>
+        </SelectContent>
+      </Select>
 
       {/* Thumbnail upload component */}
       <ThumbnailUploader
