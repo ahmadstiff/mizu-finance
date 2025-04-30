@@ -165,6 +165,7 @@ contract MizuMarketplaceTest is Test {
     address user = makeAddr("user");
     address buyer = makeAddr("buyer");
     address buyer1 = makeAddr("buyer1");
+    address oracle = 0xf08A9C60bbF1E285BF61744b17039c69BcD6287d;
 
     function setUp() public {
         vm.createSelectFork("https://devnet.dplabs-internal.com/", 18644280);
@@ -221,7 +222,7 @@ contract MizuMarketplaceTest is Test {
         usdc.approve(address(mizu), 50e6);
 
         // Try to buy below minimum (25 fragments = 50 USDC)
-        vm.expectRevert("Below minimum purchase amount");
+        vm.expectRevert(abi.encodeWithSelector(MizuMarketplace.BelowMinimumPurchaseAmount.selector));
         mizu.buyERC6960(0, 25);
         vm.stopPrank();
     }
@@ -350,7 +351,7 @@ contract MizuMarketplaceTest is Test {
 
         // Attempt to accept expired offer
         vm.prank(user);
-        vm.expectRevert("Offer expired");
+        vm.expectRevert(abi.encodeWithSelector(MizuMarketplace.OfferExpired.selector));
         mizu.acceptOffer(0);
     }
 
@@ -429,7 +430,7 @@ contract MizuMarketplaceTest is Test {
         mizu.wrapERC721(address(nft), 1, 1000);
 
         // Try to list with zero minimum purchase amount
-        vm.expectRevert("Min purchase must be greater than 0");
+        vm.expectRevert(abi.encodeWithSelector(MizuMarketplace.InvalidMinPurchaseAmount.selector));
         mizu.listERC6960(1, 0, 500, 2e6, 0);
         vm.stopPrank();
     }
@@ -440,7 +441,7 @@ contract MizuMarketplaceTest is Test {
         mizu.wrapERC721(address(nft), 1, 1000);
 
         // Try to list with zero price per unit
-        vm.expectRevert("Price must be greater than 0");
+        vm.expectRevert(abi.encodeWithSelector(MizuMarketplace.InvalidPricePerUnit.selector));
         mizu.listERC6960(1, 0, 500, 0, 100e6);
         vm.stopPrank();
     }
@@ -451,12 +452,12 @@ contract MizuMarketplaceTest is Test {
         mizu.wrapERC721(address(nft), 1, 1000);
 
         // Try to list zero amount
-        vm.expectRevert("Amount must be greater than 0");
+        vm.expectRevert(abi.encodeWithSelector(MizuMarketplace.InvalidAmount.selector));
         mizu.listERC6960(1, 0, 0, 2e6, 100e6);
         vm.stopPrank();
     }
 
-    function testPriceFeed() public {
+    function testPriceFeed() public view {
         ISupraSValueFeed priceFeed = ISupraSValueFeed(0xf08A9C60bbF1E285BF61744b17039c69BcD6287d);
         // ISupraSValueFeed priceFeed = ISupraSValueFeed(0xF439Cea7B2ec0338Ee7EC16ceAd78C9e1f47bc4c);
         console.log(priceFeed.getDerivedSvalue(1, 89, 0).roundDifference);

@@ -67,14 +67,10 @@ interface IDLTReceiver {
 }
 
 contract MizuMarketplace is Ownable {
-    enum PaymentToken {
-        USDC
-    }
-
     // Events
     event NFTWrapped(address indexed nftContract, uint256 indexed tokenId, address indexed owner, uint256 fragments);
 
-    event NFTRedeemed(address indexed nftContract, uint256 indexed tokenId, address indexed redeemer);
+    event NFTRedeemed(address indexed nftContract, uint256 indexed tokenId, uint256 indexed subId, address indexed redeemer);
 
     event FragmentsListed(
         uint256 indexed listingId,
@@ -82,7 +78,9 @@ contract MizuMarketplace is Ownable {
         uint256 indexed mainId,
         uint256 subId,
         uint256 amount,
-        uint256 pricePerUnit
+        uint256 pricePerUnit,
+        uint256 minPurchaseAmount,
+        address paymentTokenAddress
     );
 
     event FragmentsPurchased(
@@ -117,6 +115,27 @@ contract MizuMarketplace is Ownable {
 
     event OfferCancelled(uint256 indexed listingId, uint256 indexed offerId, address indexed buyer);
 
+    // Errors
+    error AmountExceedsListing();
+    error BelowMinimumPurchaseAmount();
+    error FragmentTransferFailed();
+    error InsufficientListedAmount();
+    error InsufficientListingAmount();
+    error InvalidAmount();
+    error InvalidDuration();
+    error InvalidFragmentsAmount();
+    error InvalidListing();
+    error InvalidMinPurchaseAmount();
+    error InvalidOffer();
+    error InvalidPricePerUnit();
+    error NotBuyer();
+    error NotFullOwner();
+    error NotSeller();
+    error NotWrapped();
+    error OfferExpired();
+    error TransferFailed();
+    error TokenTransferFailed();
+
     struct ERC6960Listing {
         address seller;
         uint256 mainId;
@@ -124,7 +143,7 @@ contract MizuMarketplace is Ownable {
         uint256 amount;
         uint256 pricePerUnit;
         uint256 minPurchaseAmount;
-        PaymentToken paymentToken;
+        address paymentToken;
         bool active;
     }
 
@@ -148,7 +167,8 @@ contract MizuMarketplace is Ownable {
     IERC20 public immutable usdc;
     mapping(uint256 => ERC6960Listing) public erc6960Listings;
     uint256 public erc6960Count;
-    mapping(uint256 => WrappedNFT) public wrappedNFTs;
+    mapping(address => WrappedNFT) public wrappedNFTs;
+    mapping(address => uint256) public userSubIdCounter;
 
     // Offer mappings
     mapping(uint256 => Offer) public offers;
@@ -161,42 +181,42 @@ contract MizuMarketplace is Ownable {
     }
 
     function wrapERC721(address nft, uint256 tokenId, uint256 fragments) external {
-        require(fragments > 0, "Invalid fragments amount");
+        if (fragments <= 0) revert InvalidFragmentsAmount();
         IERC721(nft).transferFrom(msg.sender, address(this), tokenId);
 
-        wrappedNFTs[tokenId] =
+        wrappedNFTs[nft] = // wrappedNFTs[tokenId]
             WrappedNFT({nftContract: nft, tokenId: tokenId, totalFragments: fragments, isWrapped: true});
 
-        dlt.mint(msg.sender, tokenId, 0, fragments);
+        dlt.mint(msg.sender, tokenId, userSubIdCounter[msg.sender], fragments);
+        userSubIdCounter[msg.sender]++;
 
         emit NFTWrapped(nft, tokenId, msg.sender, fragments);
     }
 
-    function redeemERC721(uint256 tokenId) external {
-        WrappedNFT storage nft = wrappedNFTs[tokenId];
-        require(nft.isWrapped, "Not wrapped");
-        require(dlt.subBalanceOf(msg.sender, tokenId, 0) == nft.totalFragments, "Not full owner");
+    function redeemERC721(address _nft, uint256 _subId) external {
+        WrappedNFT storage nft = wrappedNFTs[_nft];
+        if (!nft.isWrapped) revert NotWrapped();
+        if (dlt.subBalanceOf(msg.sender, tokenId, _subId) != nft.totalFragments) revert NotFullOwner();
 
-        dlt.safeTransferFrom(msg.sender, address(this), tokenId, 0, nft.totalFragments, "");
+        dlt.safeTransferFrom(msg.sender, address(this), tokenId, _subId, nft.totalFragments, "");
 
         IERC721(nft.nftContract).transferFrom(address(this), msg.sender, tokenId);
 
         nft.isWrapped = false;
 
-        emit NFTRedeemed(nft.nftContract, tokenId, msg.sender);
+        emit NFTRedeemed(nft.nftContract, tokenId, subId, msg.sender);
     }
 
-    function listERC6960(uint256 mainId, uint256 subId, uint256 amount, uint256 pricePerUnit, uint256 minPurchaseAmount)
+    function listERC6960(uint256 mainId, uint256 subId, uint256 amount, uint256 pricePerUnit, uint256 minPurchaseAmount, address paymentTokenAddress)
         external
         returns (uint256)
     {
-        require(amount > 0, "Amount must be greater than 0");
-        require(pricePerUnit > 0, "Price must be greater than 0");
-        require(minPurchaseAmount > 0, "Min purchase must be greater than 0");
+        if (amount <= 0) revert InvalidAmount();
+        if (pricePerUnit <= 0) revert InvalidPricePerUnit();
+        if (minPurchaseAmount <= 0) revert InvalidMinPurchaseAmount();
 
-        require(dlt.safeTransferFrom(msg.sender, address(this), mainId, subId, amount, ""), "Transfer failed");
+        if (!dlt.safeTransferFrom(msg.sender, address(this), mainId, subId, amount, "")) revert TransferFailed();
 
-        uint256 listingId = erc6960Count++;
         erc6960Listings[listingId] = ERC6960Listing({
             seller: msg.sender,
             mainId: mainId,
@@ -204,32 +224,33 @@ contract MizuMarketplace is Ownable {
             amount: amount,
             pricePerUnit: pricePerUnit,
             minPurchaseAmount: minPurchaseAmount,
-            paymentToken: PaymentToken.USDC,
+            paymentToken: paymentTokenAddress, // usdc enum
             active: true
         });
 
-        emit FragmentsListed(listingId, msg.sender, mainId, subId, amount, pricePerUnit);
+        uint256 listingId = erc6960Count++;
+
+        emit FragmentsListed(listingId, msg.sender, mainId, subId, amount, pricePerUnit, minPurchaseAmount, paymentTokenAddress);
 
         return listingId;
     }
 
     function buyERC6960(uint256 listingId, uint256 amount) external {
         ERC6960Listing storage listing = erc6960Listings[listingId];
-        require(listing.active, "Listing not active");
-        require(amount > 0, "Amount must be greater than 0");
-        require(amount <= listing.amount, "Insufficient listed amount");
+        if (!listing.active) revert InvalidListing();
+        if (amount <= 0) revert InvalidAmount();
+        if (amount > listing.amount) revert InsufficientListedAmount();
 
         uint256 totalPrice = amount * listing.pricePerUnit;
-        require(totalPrice >= listing.minPurchaseAmount, "Below minimum purchase amount");
+        if (totalPrice < listing.minPurchaseAmount) revert BelowMinimumPurchaseAmount();
 
         // Transfer USDC from buyer to seller
-        require(usdc.transferFrom(msg.sender, listing.seller, totalPrice), "USDC transfer failed");
+        if (!(listing.paymentToken).transferFrom(msg.sender, listing.seller, totalPrice)) revert TokenTransferFailed();
 
         // Transfer fragments to buyer
-        require(
-            dlt.safeTransferFrom(address(this), msg.sender, listing.mainId, listing.subId, amount, ""),
-            "Fragment transfer failed"
-        );
+        if (!dlt.safeTransferFrom(address(this), msg.sender, listing.mainId, listing.subId, amount, "")) {
+            revert FragmentTransferFailed();
+        }
 
         listing.amount -= amount;
         if (listing.amount == 0) {
@@ -243,8 +264,8 @@ contract MizuMarketplace is Ownable {
 
     function cancelListing(uint256 listingId) external {
         ERC6960Listing storage listing = erc6960Listings[listingId];
-        require(listing.active, "Not active");
-        require(listing.seller == msg.sender, "Not seller");
+        if (!listing.active) revert InvalidListing();
+        if (listing.seller != msg.sender) revert NotSeller();
 
         listing.active = false;
 
@@ -252,18 +273,19 @@ contract MizuMarketplace is Ownable {
     }
 
     function makeOffer(uint256 listingId, uint256 amount, uint256 pricePerUnit, uint256 duration) external {
-        require(amount > 0, "Amount must be greater than 0");
-        require(pricePerUnit > 0, "Price must be greater than 0");
-        require(duration > 0, "Duration must be greater than 0");
+        if (amount <= 0) revert InvalidAmount();
+        if (pricePerUnit <= 0) revert InvalidPricePerUnit();
+        if (duration <= 0) revert InvalidDuration();
 
         ERC6960Listing storage listing = erc6960Listings[listingId];
-        require(listing.active, "Listing not active");
-        require(amount <= listing.amount, "Amount exceeds listing");
+        if (!listing.active) revert InvalidListing();
+        if (amount > listing.amount) revert AmountExceedsListing();
 
         uint256 totalPrice = amount * pricePerUnit;
-        require(usdc.transferFrom(msg.sender, address(this), totalPrice), "USDC transfer failed");
-
+        if (!(listing.paymentToken).transferFrom(msg.sender, address(this), totalPrice)) revert TokenTransferFailed();
+        
         uint256 offerId = offerCount++;
+        
         offers[offerId] = Offer({
             buyer: msg.sender,
             listingId: listingId,
@@ -280,23 +302,22 @@ contract MizuMarketplace is Ownable {
 
     function acceptOffer(uint256 offerId) external {
         Offer storage offer = offers[offerId];
-        require(offer.active, "Offer not active");
-        require(block.timestamp <= offer.expirationTime, "Offer expired");
+        if (!offer.active) revert InvalidOffer();
+        if (block.timestamp > offer.expirationTime) revert OfferExpired();
 
         ERC6960Listing storage listing = erc6960Listings[offer.listingId];
-        require(msg.sender == listing.seller, "Not seller");
-        require(offer.amount <= listing.amount, "Insufficient listing amount");
+        if (msg.sender != listing.seller) revert NotSeller();
+        if (offer.amount > listing.amount) revert InsufficientListingAmount();
 
         uint256 totalPrice = offer.amount * offer.pricePerUnit;
 
         // Transfer USDC from contract to seller
-        require(usdc.transfer(msg.sender, totalPrice), "USDC transfer failed");
+        if (!(listing.paymentToken).transfer(msg.sender, totalPrice)) revert TokenTransferFailed();
 
         // Transfer fragments to buyer
-        require(
-            dlt.safeTransferFrom(address(this), offer.buyer, listing.mainId, listing.subId, offer.amount, ""),
-            "Fragment transfer failed"
-        );
+        if (!dlt.safeTransferFrom(address(this), offer.buyer, listing.mainId, listing.subId, offer.amount, "")) {
+            revert FragmentTransferFailed();
+        }
 
         listing.amount -= offer.amount;
         if (listing.amount == 0) {
@@ -310,13 +331,13 @@ contract MizuMarketplace is Ownable {
 
     function cancelOffer(uint256 offerId) external {
         Offer storage offer = offers[offerId];
-        require(offer.active, "Offer not active");
-        require(msg.sender == offer.buyer, "Not buyer");
+        if (!offer.active) revert InvalidOffer();
+        if (msg.sender != offer.buyer) revert NotBuyer();
 
         uint256 totalPrice = offer.amount * offer.pricePerUnit;
 
         // Refund USDC to buyer
-        require(usdc.transfer(offer.buyer, totalPrice), "USDC refund failed");
+        if (!usdc.transfer(offer.buyer, totalPrice)) revert TokenTransferFailed();
 
         offer.active = false;
 
