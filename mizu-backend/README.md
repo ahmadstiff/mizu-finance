@@ -100,18 +100,41 @@ Request Body:
 
 Required Fields:
 
-- `title`
-- `description`
-- `owner`
-- `nftId`
-- `nftAddress`
-- `thumbnail`
-- `imageUrl`
-- `price`
-- `currency`
-- `category`
+- `title`: Title of the NFT
+- `description`: Description of the NFT
+- `owner`: Wallet address of the NFT owner
+- `nftId`: Unique identifier of the NFT
+- `nftAddress`: Contract address of the NFT
+- `thumbnail`: URL of the NFT thumbnail image
+- `imageUrl`: URL of the full NFT image
+- `price`: Price of the NFT
+- `currency`: Currency used for pricing (e.g., ETH)
+- `category`: Category of the NFT (e.g., Art, Gaming, etc.)
 
-Note: `status` is optional and defaults to "LISTED" if not provided.
+Optional Fields:
+
+- `status`: Status of the NFT (defaults to "LISTED" if not provided)
+- `tags`: Array of tags for the NFT
+
+Error Responses:
+
+Missing Required Fields:
+
+```json
+{
+  "error": "Missing required fields",
+  "details": "The following fields are required: title, description, owner, nftId, nftAddress, thumbnail, imageUrl, price, currency, category"
+}
+```
+
+Duplicate NFT:
+
+```json
+{
+  "error": "NFT with this ID or address already exists (duplicate key)",
+  "details": "Prisma error code: P2002"
+}
+```
 
 #### Update NFT
 
@@ -137,10 +160,47 @@ Request Body:
 }
 ```
 
+Error Responses:
+
+NFT Not Found:
+
+```json
+{
+  "error": "NFT not found",
+  "details": "Prisma error code: P2025"
+}
+```
+
+Duplicate Field:
+
+```json
+{
+  "error": "Duplicate unique field value",
+  "details": "Prisma error code: P2002"
+}
+```
+
 #### Delete NFT
 
 ```
 DELETE /api/nfts/:id
+```
+
+Success Response:
+
+```json
+{
+  "message": "NFT deleted successfully"
+}
+```
+
+Error Response (NFT Not Found):
+
+```json
+{
+  "error": "NFT not found",
+  "details": "Prisma error code: P2025"
+}
 ```
 
 ### Cart
