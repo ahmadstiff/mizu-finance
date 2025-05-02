@@ -70,7 +70,9 @@ contract MizuMarketplace is Ownable {
     // Events
     event NFTWrapped(address indexed nftContract, uint256 indexed tokenId, address indexed owner, uint256 fragments);
 
-    event NFTRedeemed(address indexed nftContract, uint256 indexed tokenId, uint256 indexed subId, address indexed redeemer);
+    event NFTRedeemed(
+        address nftContract, uint256 tokenId, uint256 subId, address redeemer
+    );
 
     event FragmentsListed(
         uint256 indexed listingId,
@@ -185,7 +187,7 @@ contract MizuMarketplace is Ownable {
         IERC721(nft).transferFrom(msg.sender, address(this), tokenId);
 
         wrappedNFTs[nft] = // wrappedNFTs[tokenId]
-            WrappedNFT({nftContract: nft, tokenId: tokenId, totalFragments: fragments, isWrapped: true});
+         WrappedNFT({nftContract: nft, tokenId: tokenId, totalFragments: fragments, isWrapped: true});
 
         dlt.mint(msg.sender, tokenId, userSubIdCounter[msg.sender], fragments);
         userSubIdCounter[msg.sender]++;
@@ -193,30 +195,34 @@ contract MizuMarketplace is Ownable {
         emit NFTWrapped(nft, tokenId, msg.sender, fragments);
     }
 
-    function redeemERC721(address _nft, uint256 _subId) external {
+    function redeemERC721(address _nft, uint256 _tokenId, uint256 _subId) external {
         WrappedNFT storage nft = wrappedNFTs[_nft];
         if (!nft.isWrapped) revert NotWrapped();
-        if (dlt.subBalanceOf(msg.sender, tokenId, _subId) != nft.totalFragments) revert NotFullOwner();
+        if (dlt.subBalanceOf(msg.sender, _tokenId, _subId) != nft.totalFragments) revert NotFullOwner();
 
-        dlt.safeTransferFrom(msg.sender, address(this), tokenId, _subId, nft.totalFragments, "");
+        dlt.safeTransferFrom(msg.sender, address(this), _tokenId, _subId, nft.totalFragments, "");
 
-        IERC721(nft.nftContract).transferFrom(address(this), msg.sender, tokenId);
+        IERC721(nft.nftContract).transferFrom(address(this), msg.sender, _tokenId);
 
         nft.isWrapped = false;
 
-        emit NFTRedeemed(nft.nftContract, tokenId, subId, msg.sender);
+        emit NFTRedeemed(nft.nftContract, _tokenId, _subId, msg.sender);
     }
 
-    function listERC6960(uint256 mainId, uint256 subId, uint256 amount, uint256 pricePerUnit, uint256 minPurchaseAmount, address paymentTokenAddress)
-        external
-        returns (uint256)
-    {
+    function listERC6960(
+        uint256 mainId,
+        uint256 subId,
+        uint256 amount,
+        uint256 pricePerUnit,
+        uint256 minPurchaseAmount,
+        address paymentTokenAddress
+    ) external returns (uint256) {
         if (amount <= 0) revert InvalidAmount();
         if (pricePerUnit <= 0) revert InvalidPricePerUnit();
         if (minPurchaseAmount <= 0) revert InvalidMinPurchaseAmount();
 
         if (!dlt.safeTransferFrom(msg.sender, address(this), mainId, subId, amount, "")) revert TransferFailed();
-
+        uint256 listingId = erc6960Count++;
         erc6960Listings[listingId] = ERC6960Listing({
             seller: msg.sender,
             mainId: mainId,
@@ -228,9 +234,9 @@ contract MizuMarketplace is Ownable {
             active: true
         });
 
-        uint256 listingId = erc6960Count++;
-
-        emit FragmentsListed(listingId, msg.sender, mainId, subId, amount, pricePerUnit, minPurchaseAmount, paymentTokenAddress);
+        emit FragmentsListed(
+            listingId, msg.sender, mainId, subId, amount, pricePerUnit, minPurchaseAmount, paymentTokenAddress
+        );
 
         return listingId;
     }
@@ -244,13 +250,13 @@ contract MizuMarketplace is Ownable {
         uint256 totalPrice = amount * listing.pricePerUnit;
         if (totalPrice < listing.minPurchaseAmount) revert BelowMinimumPurchaseAmount();
 
-        // Transfer USDC from buyer to seller
-        if (!(listing.paymentToken).transferFrom(msg.sender, listing.seller, totalPrice)) revert TokenTransferFailed();
-
-        // Transfer fragments to buyer
+        // Transfer fragments to buyer first to prevent reentrancy
         if (!dlt.safeTransferFrom(address(this), msg.sender, listing.mainId, listing.subId, amount, "")) {
             revert FragmentTransferFailed();
         }
+
+        // Transfer USDC from buyer to seller
+        if (!(IERC20(listing.paymentToken)).transferFrom(msg.sender, listing.seller, totalPrice)) revert TokenTransferFailed();
 
         listing.amount -= amount;
         if (listing.amount == 0) {
@@ -282,10 +288,10 @@ contract MizuMarketplace is Ownable {
         if (amount > listing.amount) revert AmountExceedsListing();
 
         uint256 totalPrice = amount * pricePerUnit;
-        if (!(listing.paymentToken).transferFrom(msg.sender, address(this), totalPrice)) revert TokenTransferFailed();
-        
+        if (!(IERC20(listing.paymentToken)).transferFrom(msg.sender, address(this), totalPrice)) revert TokenTransferFailed();
+
         uint256 offerId = offerCount++;
-        
+
         offers[offerId] = Offer({
             buyer: msg.sender,
             listingId: listingId,
@@ -312,7 +318,7 @@ contract MizuMarketplace is Ownable {
         uint256 totalPrice = offer.amount * offer.pricePerUnit;
 
         // Transfer USDC from contract to seller
-        if (!(listing.paymentToken).transfer(msg.sender, totalPrice)) revert TokenTransferFailed();
+        if (!(IERC20(listing.paymentToken)).transfer(msg.sender, totalPrice)) revert TokenTransferFailed();
 
         // Transfer fragments to buyer
         if (!dlt.safeTransferFrom(address(this), offer.buyer, listing.mainId, listing.subId, offer.amount, "")) {
