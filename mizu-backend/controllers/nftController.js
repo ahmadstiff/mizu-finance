@@ -57,6 +57,7 @@ export const createNFT = async (req, res) => {
     description,
     owner,
     nftId,
+    tags,
     nftAddress,
     thumbnail,
     imageUrl,
@@ -66,8 +67,24 @@ export const createNFT = async (req, res) => {
     status
   } = req.body;
 
-  if (!title || !description || !owner || !nftId || !nftAddress || !thumbnail || !imageUrl || !price || !currency || !category) {
-    return res.status(400).json({ error: 'Missing required fields' });
+  // Check for missing required fields
+  const missingFields = [];
+  if (!title) missingFields.push('title');
+  if (!description) missingFields.push('description');
+  if (!owner) missingFields.push('owner');
+  if (!nftId) missingFields.push('nftId');
+  if (!nftAddress) missingFields.push('nftAddress');
+  if (!thumbnail) missingFields.push('thumbnail');
+  if (!imageUrl) missingFields.push('imageUrl');
+  if (!price) missingFields.push('price');
+  if (!currency) missingFields.push('currency');
+  if (!category) missingFields.push('category');
+
+  if (missingFields.length > 0) {
+    return res.status(400).json({
+      error: 'Missing required fields',
+      details: `The following fields are required: ${missingFields.join(', ')}`
+    });
   }
 
   try {
@@ -77,6 +94,7 @@ export const createNFT = async (req, res) => {
         description,
         owner,
         nftId,
+        tags,
         nftAddress,
         thumbnail,
         imageUrl,
@@ -137,6 +155,7 @@ export const updateNFT = async (req, res) => {
         nftId,
         nftAddress,
         price,
+
         category,
         status,
       },

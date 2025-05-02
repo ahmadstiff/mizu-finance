@@ -13,23 +13,25 @@ datasource db {
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
-model NFT {
-  id           Int      @id @default(autoincrement())
-  title        String
-  description  String
-  owner        String
-  nftId        String   @unique // ID dari Smart Contract
-  nftAddress   String
-  thumbnail    String
-  imageUrl     String
-  price        String
-  currency     String   // Contoh: 'ETH', 'MATIC', 'USDC'
-  category     String
-  status       Status   @default(LISTED)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
 
-  carts        Cart[]   @relation("NFTToCart")
+model NFT {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  owner       String
+  nftId       String   @unique // ID dari Smart Contract
+  nftAddress  String
+  tags        String?
+  thumbnail   String
+  imageUrl    String
+  price       String
+  currency    String // Contoh: 'ETH', 'MATIC', 'USDC'
+  category    String
+  status      Status   @default(LISTED)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  carts Cart[] @relation("NFTToCart")
 }
 
 model Cart {
@@ -38,7 +40,7 @@ model Cart {
   nftId     String
   createdAt DateTime @default(now())
 
-  nft       NFT      @relation("NFTToCart", fields: [nftId], references: [nftId])
+  nft NFT @relation("NFTToCart", fields: [nftId], references: [nftId])
 }
 
 enum Status {
@@ -47,4 +49,3 @@ enum Status {
   SOLD_OUT
   PENDING
 }
-

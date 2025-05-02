@@ -2,16 +2,16 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import AssetCard from "./asset-card";
 import InfoCard from "./info-card";
 import BuyDialog from "@/components/dialog/buy-dialog";
 import Link from "next/link";
+import AssetList from "@/components/assets/asset-list";
 
 export default function AssetDetailPage() {
   return (
     <div className="flex flex-col lg:flex-row gap-6 p-4 max-w-7xl mx-auto">
       <div className="w-full lg:w-1/3">
-        <AssetCard />
+        <AssetList />
       </div>
       <div className="w-full lg:w-2/3 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
