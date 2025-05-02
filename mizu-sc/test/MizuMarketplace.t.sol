@@ -192,7 +192,17 @@ contract MizuMarketplaceTest is Test {
         mizu.wrapERC721(address(nft), 1, 1000);
 
         // List 500 fragments at 2 USDC each with min purchase 100 USDC
-        mizu.listERC6960(1, 0, 500, 2e6, 100e6);
+        /**
+         * !SECTION
+         * @notice
+         * @param mainId
+         * @param subId
+         * @param amount
+         * @param pricePerUnit
+         * @param minPurchaseAmount
+         * @param paymentTokenAddress
+         */
+        mizu.listERC6960(1, 0, 500, 2e6, 100e6, address(usdc));
         vm.stopPrank();
 
         // Buyer approves and purchases fragments
@@ -215,7 +225,17 @@ contract MizuMarketplaceTest is Test {
         mizu.wrapERC721(address(nft), 1, 1000);
 
         // List with minimum purchase 100 USDC
-        mizu.listERC6960(1, 0, 1000, 2e6, 100e6);
+        /**
+         * !SECTION
+         * @notice
+         * @param mainId
+         * @param subId
+         * @param amount
+         * @param pricePerUnit
+         * @param minPurchaseAmount
+         * @param paymentTokenAddress
+         */
+        mizu.listERC6960(1, 0, 1000, 2e6, 100e6, address(usdc));
         vm.stopPrank();
 
         vm.startPrank(buyer);
@@ -231,7 +251,7 @@ contract MizuMarketplaceTest is Test {
         vm.startPrank(user);
         nft.approve(address(mizu), 1);
         mizu.wrapERC721(address(nft), 1, 1000);
-        mizu.listERC6960(1, 0, 1000, 2e6, 100e6);
+        mizu.listERC6960(1, 0, 1000, 2e6, 100e6, address(usdc));
         vm.stopPrank();
 
         // First buyer buys 300 fragments
@@ -257,7 +277,7 @@ contract MizuMarketplaceTest is Test {
         vm.startPrank(user);
         nft.approve(address(mizu), 1);
         mizu.wrapERC721(address(nft), 1, 100);
-        mizu.listERC6960(1, 0, 100, 2e6, 100e6);
+        mizu.listERC6960(1, 0, 100, 2e6, 100e6, address(usdc));
         vm.stopPrank();
 
         // Buyer buys all fragments
@@ -266,7 +286,7 @@ contract MizuMarketplaceTest is Test {
         mizu.buyERC6960(0, 100);
 
         // Buyer can now redeem the NFT
-        mizu.redeemERC721(1);
+        mizu.redeemERC721(address(nft), 1, 0);
         vm.stopPrank();
 
         // Assert final state
@@ -279,7 +299,7 @@ contract MizuMarketplaceTest is Test {
         vm.startPrank(user);
         nft.approve(address(mizu), 1);
         mizu.wrapERC721(address(nft), 1, 1000);
-        mizu.listERC6960(1, 0, 1000, 2e6, 100e6);
+        mizu.listERC6960(1, 0, 1000, 2e6, 100e6, address(usdc));
         vm.stopPrank();
 
         vm.startPrank(buyer);
@@ -305,7 +325,7 @@ contract MizuMarketplaceTest is Test {
         vm.startPrank(user);
         nft.approve(address(mizu), 1);
         mizu.wrapERC721(address(nft), 1, 1000);
-        mizu.listERC6960(1, 0, 1000, 2e6, 100e6);
+        mizu.listERC6960(1, 0, 1000, 2e6, 100e6, address(usdc));
         vm.stopPrank();
 
         vm.startPrank(buyer);
@@ -334,7 +354,7 @@ contract MizuMarketplaceTest is Test {
         vm.startPrank(user);
         nft.approve(address(mizu), 1);
         mizu.wrapERC721(address(nft), 1, 1000);
-        mizu.listERC6960(1, 0, 1000, 2e6, 100e6);
+        mizu.listERC6960(1, 0, 1000, 2e6, 100e6, address(usdc));
         vm.stopPrank();
 
         vm.startPrank(buyer);
@@ -359,7 +379,7 @@ contract MizuMarketplaceTest is Test {
         vm.startPrank(user);
         nft.approve(address(mizu), 1);
         mizu.wrapERC721(address(nft), 1, 1000);
-        mizu.listERC6960(1, 0, 1000, 2e6, 100e6);
+        mizu.listERC6960(1, 0, 1000, 2e6, 100e6, address(usdc));
         vm.stopPrank();
 
         // First buyer makes an offer
@@ -395,7 +415,7 @@ contract MizuMarketplaceTest is Test {
         vm.startPrank(user);
         nft.approve(address(mizu), 1);
         mizu.wrapERC721(address(nft), 1, 1000);
-        mizu.listERC6960(1, 0, 1000, 2e6, 100e6);
+        mizu.listERC6960(1, 0, 1000, 2e6, 100e6, address(usdc));
         vm.stopPrank();
 
         // Make multiple offers
@@ -431,7 +451,7 @@ contract MizuMarketplaceTest is Test {
 
         // Try to list with zero minimum purchase amount
         vm.expectRevert(abi.encodeWithSelector(MizuMarketplace.InvalidMinPurchaseAmount.selector));
-        mizu.listERC6960(1, 0, 500, 2e6, 0);
+        mizu.listERC6960(1, 0, 500, 2e6, 0, address(usdc));
         vm.stopPrank();
     }
 
@@ -442,7 +462,7 @@ contract MizuMarketplaceTest is Test {
 
         // Try to list with zero price per unit
         vm.expectRevert(abi.encodeWithSelector(MizuMarketplace.InvalidPricePerUnit.selector));
-        mizu.listERC6960(1, 0, 500, 0, 100e6);
+        mizu.listERC6960(1, 0, 500, 0, 100e6, address(usdc));
         vm.stopPrank();
     }
 
@@ -453,7 +473,7 @@ contract MizuMarketplaceTest is Test {
 
         // Try to list zero amount
         vm.expectRevert(abi.encodeWithSelector(MizuMarketplace.InvalidAmount.selector));
-        mizu.listERC6960(1, 0, 0, 2e6, 100e6);
+        mizu.listERC6960(1, 0, 0, 2e6, 100e6, address(usdc));
         vm.stopPrank();
     }
 
