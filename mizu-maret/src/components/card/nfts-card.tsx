@@ -13,12 +13,11 @@ const NftsCard = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="flex flex-wrap gap-6 justify-center mt-4">
+    <div className="flex flex-wrap gap-4 justify-start mt-4 max-w-4xl mx-auto">
       {assets.map((asset) => (
-        console.log(asset.imageUrl),
         <Card
           key={asset.id}
-          className="mx-auto w-60 rounded-sm h-70 bg-black text-white border-0 overflow-hidden cursor-pointer"
+          className="w-60 rounded-sm h-70 bg-black text-white border-0 overflow-hidden cursor-pointer"
           onMouseEnter={() => setHoveredId(asset.id)}
           onMouseLeave={() => setHoveredId(null)}
         >
@@ -31,8 +30,6 @@ const NftsCard = () => {
                 fill
               />
             </div>
-        
-
             <div className="bg-black text-white p-4 rounded-b-xl flex flex-col gap-2">
               <div className="text-sm text-gray-400">Min. Asset Valuation</div>
               <div className="flex justify-between">

@@ -1,7 +1,11 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { uploadToCloudinary } from "@/lib/data/upload-thumbnail";
+import { postNftData } from "@/lib/data/post-nft";
+import { NftFormData } from "@/types/type";
+import ThumbnailUploader from "@/components/thumbnail-uploader";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,10 +16,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { NftFormData } from "@/types/type";
-import ThumbnailUploader from "@/components/thumbnail-uploader";
+import { useAccount } from "wagmi";
 
-// Initial form data
 const initialFormData: NftFormData = {
   title: "",
   description: "",
@@ -33,9 +35,9 @@ const initialFormData: NftFormData = {
 
 export default function NftForm() {
   const [formData, setFormData] = useState<NftFormData>(initialFormData);
-  const [uploading, setUploading] = useState<boolean>(false);
+  const [uploading, setUploading] = useState(false);
+  const { address } = useAccount();
 
-  // Handle changes in input fields
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -43,60 +45,36 @@ export default function NftForm() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle changes for Select components
   const handleSelectChange = (name: keyof NftFormData, value: string) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Upload file to Cloudinary
-  const uploadToCloudinary = async (file: File) => {
+  useEffect(() => {
+    if (address) {
+      setFormData((prev) => ({ ...prev, owner: address }));
+    }
+  }, [address]);
+
+  const onDrop = useCallback(async (acceptedFiles: File[]) => {
+    if (acceptedFiles.length === 0) return;
     setUploading(true);
     try {
-      const data = new FormData();
-      data.append("file", file);
-      data.append("upload_preset", "z6euuqyl");
-
-      const res = await fetch(
-        "https://api.cloudinary.com/v1_1/dv3z889zh/image/upload",
-        {
-          method: "POST",
-          body: data,
-        }
-      );
-
-      const result = await res.json();
-      if (result.secure_url) {
-        setFormData((prev) => ({
-          ...prev,
-          thumbnail: result.secure_url,
-        }));
-      }
+      const url = await uploadToCloudinary(acceptedFiles[0]);
+      setFormData((prev) => ({ ...prev, thumbnail: url }));
     } catch (err) {
-      console.error("Upload error:", err);
-      alert("Failed to upload thumbnail. Please try again.");
+      alert("Upload failed");
     } finally {
       setUploading(false);
     }
-  };
-
-  // Dropzone callback
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    if (acceptedFiles.length > 0) {
-      uploadToCloudinary(acceptedFiles[0]);
-    }
   }, []);
 
-  // Setup dropzone
   const dropzone = useDropzone({
     onDrop,
-    accept: {
-      "image/*": [".jpeg", ".jpg", ".png", ".gif", ".webp"],
-    },
+    accept: { "image/*": [".jpeg", ".jpg", ".png", ".gif", ".webp"] },
     maxFiles: 1,
-    maxSize: 2 * 1024 * 1024, // 2MB
+    maxSize: 2 * 1024 * 1024,
   });
 
-  // Handle form submission
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -106,41 +84,15 @@ export default function NftForm() {
     }
 
     try {
-      const res = await fetch("https://mizu-backend-one.vercel.app/api/nfts", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await res.json().catch((jsonErr) => {
-        console.error("Failed to parse JSON from response:", jsonErr);
-        return null;
-      });
-
-      if (!res.ok) {
-        console.error("Server responded with an error:", {
-          status: res.status,
-          statusText: res.statusText,
-          body: data,
-        });
-        const errorMessage = data?.message || "Failed to send data to server.";
-        throw new Error(errorMessage);
-      }
-
-      console.log("Success response:", data);
+      await postNftData(formData);
       alert("NFT added successfully!");
       setFormData(initialFormData);
     } catch (error) {
-      console.error("Submission caught error:", error);
-
-      const message =
-        error instanceof Error
-          ? error.message
-          : "Unknown error occurred during submission.";
-
-      alert(`Submission failed: ${message}`);
+      alert(
+        `Submission failed: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
     }
   };
 
@@ -163,11 +115,11 @@ export default function NftForm() {
       <Input
         name="owner"
         value={formData.owner}
-        onChange={handleChange}
-        required
         placeholder="Owner Wallet Address"
+        readOnly
+        hidden
+        disabled
       />
-
       <div className="grid grid-cols-2 gap-4">
         <Input
           name="nftId"
@@ -189,7 +141,7 @@ export default function NftForm() {
         onValueChange={(v) => handleSelectChange("tags", v)}
       >
         <SelectTrigger>
-          <SelectValue placeholder="Select Tags" />
+          <SelectValue placeholder="Tags" />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="art">Art</SelectItem>
@@ -198,7 +150,6 @@ export default function NftForm() {
         </SelectContent>
       </Select>
 
-      {/* Thumbnail upload component */}
       <ThumbnailUploader
         uploading={uploading}
         thumbnail={formData.thumbnail}
@@ -209,10 +160,9 @@ export default function NftForm() {
         name="imageUrl"
         value={formData.imageUrl}
         onChange={handleChange}
-        placeholder="IPFS URL for Image (optional)"
         required
+        placeholder="Image URL (IPFS)"
       />
-
       <div className="grid grid-cols-2 gap-4">
         <Input
           type="number"
@@ -227,7 +177,7 @@ export default function NftForm() {
           onValueChange={(v) => handleSelectChange("currency", v)}
         >
           <SelectTrigger>
-            <SelectValue placeholder="Select Currency" />
+            <SelectValue placeholder="Currency" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="ETH">ETH</SelectItem>
@@ -235,7 +185,6 @@ export default function NftForm() {
           </SelectContent>
         </Select>
       </div>
-
       <Select
         value={formData.category}
         onValueChange={(v) => handleSelectChange("category", v)}
@@ -247,10 +196,8 @@ export default function NftForm() {
           <SelectItem value="Art">Art</SelectItem>
           <SelectItem value="Music">Music</SelectItem>
           <SelectItem value="Collectibles">Collectibles</SelectItem>
-          <SelectItem value="Games">Games</SelectItem>
         </SelectContent>
       </Select>
-
       <Select
         value={formData.status}
         onValueChange={(v) => handleSelectChange("status", v)}
@@ -264,7 +211,6 @@ export default function NftForm() {
           <SelectItem value="PENDING">PENDING</SelectItem>
         </SelectContent>
       </Select>
-
       <Button type="submit" className="mt-4">
         Save NFT
       </Button>
