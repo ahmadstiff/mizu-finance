@@ -2,7 +2,6 @@
 
 import { Search, ShoppingCart } from "lucide-react";
 import Link from "next/link";
-import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import ButtonConnectWallet from "./button-connect-wallet";
 import NextImage from "next/image";
@@ -46,8 +45,8 @@ export default function Navbar() {
           <nav className="hidden md:flex items-center space-x-8">
             {[
               { name: "Home", path: "/" },
-              { name: "Assets", path: "/assets" },
               { name: "Asset Hub", path: "/asset-hub" },
+              { name: "My Assets", path: "/my-assets" },
             ].map((item) => (
               <Link
                 key={item.path}

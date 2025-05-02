@@ -7,7 +7,7 @@ import RecommendationAssets from "./_components/recomend-assets";
 const HomePage = () => {
   return (
     <>
-      <div className="mx-5">
+      <div className="m-5">
         <CarouselCustomNavigation />
         <HeroImage />
         <RecommendationAssets />
