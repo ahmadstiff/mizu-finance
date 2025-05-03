@@ -21,7 +21,7 @@ const NftsCard = () => {
           >
             <CardContent className="p-0 flex flex-col h-full">
               <Skeleton className="w-full h-64 bg-gray-300" /> {/* Image */}
-              <div className="bg-blue-700 p-4 flex flex-col gap-2">
+              <div className="bg-white p-4 flex flex-col gap-2">
                 <Skeleton className="h-6 w-3/4 bg-gray-400" /> {/* Title */}
                 <div className="flex justify-between">
                   <Skeleton className="h-5 w-1/3 bg-gray-400" /> {/* Price */}
@@ -42,7 +42,7 @@ const NftsCard = () => {
       {assets.map((asset) => (
         <Card
           key={asset.id}
-          className="w-[300px] rounded-sm h-[340px] bg-white text-white border-2 border-gray-200 overflow-hidden shadow-lg"
+          className="w-[300px] rounded-sm h-[380px] bg-white text-white border-2 border-gray-200 overflow-hidden shadow-lg"
           onMouseEnter={() => setHoveredId(asset.id)}
           onMouseLeave={() => setHoveredId(null)}
         >
@@ -57,15 +57,15 @@ const NftsCard = () => {
               />
             </div>
             <Link href={`/asset-detail/${asset.id}`}>
-              <div className="bg-blue-700 text-gray-100 mt-auto p-4 rounded-b-sm flex flex-col gap-2 cursor-pointer ">
-                <div className="text-xl text-gray-100 font-semibold">
+              <div className="bg-white text-gray-800 mt-4 p-4 rounded-b-sm flex flex-col gap-2 cursor-pointer ">
+                <div className="text-xl text-gray-700 font-semibold">
                   {asset.title}
                 </div>
                 <div className="flex justify-between">
-                  <div className="text-lg font-bold">
+                  <div className="text-lg font-medium">
                     {asset.price} {asset.currency}
                   </div>
-                  <div className="text-md text-gray-200">
+                  <div className="text-md text-gray-600">
                     {asset.category}
                   </div>
                 </div>

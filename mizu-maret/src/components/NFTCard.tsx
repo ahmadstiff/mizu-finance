@@ -22,7 +22,7 @@ export function NFTCard({ id, title, thumbnail, price, currency, category, image
 
     return (
         <Card
-            className="w-[300px] h-[340px] rounded-sm bg-white border-2 border-gray-200 overflow-hidden shadow-lg"
+            className="w-[300px] h-[380px] rounded-sm bg-white border-2 border-gray-200 overflow-hidden shadow-lg"
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
         >
@@ -37,13 +37,13 @@ export function NFTCard({ id, title, thumbnail, price, currency, category, image
                     />
                 </div>
                 <Link href={`/asset-detail/${id}`}>
-                    <div className="bg-blue-700 text-gray-100 mt-auto p-4 rounded-b-sm flex flex-col gap-2 cursor-pointer">
-                        <div className="text-xl text-gray-100 font-semibold">{title}</div>
+                    <div className="bg-white text-gray-800 mt-auto p-4 rounded-b-sm flex flex-col gap-2 cursor-pointer">
+                        <div className="text-xl text-gray-700 font-semibold">{title}</div>
                         <div className="flex justify-between">
                             <div className="text-lg font-bold">
                                 {price} {currency}
                             </div>
-                            <div className="text-md text-gray-200">{category}</div>
+                            <div className="text-md text-gray-600">{category}</div>
                         </div>
                     </div>
                 </Link>

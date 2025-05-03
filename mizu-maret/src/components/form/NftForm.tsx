@@ -29,7 +29,7 @@ const initialFormData: NftFormData = {
   imageUrl: "",
   price: "",
   currency: "ETH",
-  category: "Art",
+  category: "commodities",
   status: "LISTED",
 };
 
@@ -190,11 +190,11 @@ export default function NftForm() {
         onValueChange={(v) => handleSelectChange("category", v)}
       >
         <SelectTrigger>
-          <SelectValue placeholder="Category" />
+          <SelectValue placeholder="category" > </SelectValue> 
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="Art">Art</SelectItem>
-          <SelectItem value="Music">Music</SelectItem>
+          <SelectItem value="royality">Royality</SelectItem>
+          <SelectItem value="Commodities">Commodities</SelectItem>
           <SelectItem value="Collectibles">Collectibles</SelectItem>
         </SelectContent>
       </Select>

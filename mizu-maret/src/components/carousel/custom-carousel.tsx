@@ -15,11 +15,22 @@ function CarouselCustomNavigation() {
   const [isPaused, setIsPaused] = React.useState(false);
   const intervalRef = React.useRef<NodeJS.Timeout | null>(null);
 
-
-  const images = [
-    "https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2560&q=80",
-    "https://images.unsplash.com/photo-1493246507139-91e8fad9978e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2940&q=80",
-    "https://images.unsplash.com/photo-1518623489648-a173ef7824f3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2762&q=80",
+  const carouselItems = [
+    {
+      image:
+        "https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2560&q=80",
+      tagline: "Your Gateway to the World of NFTs",
+    },
+    {
+      image:
+        "https://images.unsplash.com/photo-1493246507139-91e8fad9978e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2940&q=80",
+      tagline: "Where Digital Art Meets Ownership",
+    },
+    {
+      image:
+        "https://images.unsplash.com/photo-1518623489648-a173ef7824f3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2762&q=80",
+      tagline: "Step into the Next Era of Digital Collectibles",
+    },
   ];
 
   React.useEffect(() => {
@@ -38,14 +49,13 @@ function CarouselCustomNavigation() {
   // Autoplay functionality with looping
   React.useEffect(() => {
     if (api && !isPaused) {
-      // Clear any existing interval
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
 
       intervalRef.current = setInterval(() => {
         if (current === count - 1) {
-          api.scrollTo(0); 
+          api.scrollTo(0);
         } else {
           api.scrollNext();
         }
@@ -66,7 +76,6 @@ function CarouselCustomNavigation() {
     [api]
   );
 
-  // Handle next with looping
   const handleNext = React.useCallback(() => {
     if (current === count - 1) {
       api?.scrollTo(0);
@@ -75,7 +84,6 @@ function CarouselCustomNavigation() {
     }
   }, [api, current, count]);
 
-  // Handle previous with looping
   const handlePrevious = React.useCallback(() => {
     if (current === 0) {
       api?.scrollTo(count - 1);
@@ -92,14 +100,19 @@ function CarouselCustomNavigation() {
     >
       <Carousel setApi={setApi} className="rounded-3xl overflow-hidden mx-5 hover:cursor-pointer">
         <CarouselContent>
-          {images.map((image, index) => (
+          {carouselItems.map((item, index) => (
             <CarouselItem key={index}>
               <div className="relative h-110 w-full">
                 <img
-                  src={image || "/placeholder.svg"}
+                  src={item.image || "/placeholder.svg"}
                   alt={`Image ${index + 1}`}
                   className="h-full w-full object-cover rounded-3xl"
                 />
+                <div className="absolute bottom-8 left-0 right-0 text-center">
+                  <h2 className="text-white text-xl md:text-2xl lg:text-3xl xl:text-5xl font-bold py-2 px-4 rounded-lg mx-auto inline-block">
+                    {item.tagline}
+                  </h2>
+                </div>
               </div>
             </CarouselItem>
           ))}
