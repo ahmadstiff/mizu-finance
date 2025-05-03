@@ -14,16 +14,19 @@ const NftsCard = () => {
   if (loading) {
     return (
       <div className="flex flex-wrap gap-4 justify-start mt-4 max-w-full mx-4">
-        {[...Array(6)].map((_, index) => (
+        {[...Array(3)].map((_, index) => (
           <Card
             key={index}
-            className="w-60 rounded-sm h-[340px] text-white border-0 overflow-hidden"
+            className="w-[300px] rounded-sm h-[340px] text-white border-2 border-gray-200 overflow-hidden shadow-lg"
           >
             <CardContent className="p-0 flex flex-col h-full">
-              <Skeleton className="w-60 h-60 bg-gray-300" /> {/* Image */}
-              <div className="bg-gray-300 p-4 flex flex-col gap-2">
-                <Skeleton className="h-4 w-28 bg-gray-600" /> {/* Label */}
-                <Skeleton className="h-6 w-20 bg-gray-600" /> {/* Price */}
+              <Skeleton className="w-full h-64 bg-gray-300" /> {/* Image */}
+              <div className="bg-blue-700 p-4 flex flex-col gap-2">
+                <Skeleton className="h-6 w-3/4 bg-gray-400" /> {/* Title */}
+                <div className="flex justify-between">
+                  <Skeleton className="h-5 w-1/3 bg-gray-400" /> {/* Price */}
+                  <Skeleton className="h-5 w-1/4 bg-gray-400" /> {/* Category */}
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -39,27 +42,31 @@ const NftsCard = () => {
       {assets.map((asset) => (
         <Card
           key={asset.id}
-          className="w-60 rounded-sm h-[340px] bg-black text-white border-0 overflow-hidden cursor-pointer"
+          className="w-[300px] rounded-sm h-[340px] bg-white text-white border-2 border-gray-200 overflow-hidden shadow-lg"
           onMouseEnter={() => setHoveredId(asset.id)}
           onMouseLeave={() => setHoveredId(null)}
         >
-          <CardContent className="p-0 flex flex-col h-full">
-            <div className="relative w-60 h-60 overflow-hidden">
+          <CardContent className="p-0 flex flex-col flex-1">
+            <div className="relative w-full flex items-center justify-center overflow-hidden mx-auto">
               <Image
                 src={hoveredId === asset.id ? asset.imageUrl : asset.thumbnail}
                 alt={asset.title}
-                className="object-cover w-full h-full transition-all duration-300 rounded-sm"
-                fill
+                className="object-contain w-full h-64 rounded-sm transition-all duration-300"
+                width={256}
+                height={256}
               />
             </div>
             <Link href={`/asset-detail/${asset.id}`}>
-              <div className="bg-black text-white p-4 rounded-b-xl flex flex-col gap-2">
-                <div className="text-sm text-gray-400">
-                  Min. Asset Valuation
+              <div className="bg-blue-700 text-gray-100 mt-auto p-4 rounded-b-sm flex flex-col gap-2 cursor-pointer ">
+                <div className="text-xl text-gray-100 font-semibold">
+                  {asset.title}
                 </div>
                 <div className="flex justify-between">
-                  <div className="text-xl font-bold">
+                  <div className="text-lg font-bold">
                     {asset.price} {asset.currency}
+                  </div>
+                  <div className="text-md text-gray-200">
+                    {asset.category}
                   </div>
                 </div>
               </div>
