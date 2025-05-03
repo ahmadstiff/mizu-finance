@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Card, CardContent } from "../ui/card";
 import { useNftsData } from "@/hooks/useNftsData";
 import Image from "next/image";
+import Link from "next/link";
 
 const NftsCard = () => {
   const { assets, loading, error } = useNftsData();
@@ -30,14 +31,18 @@ const NftsCard = () => {
                 fill
               />
             </div>
-            <div className="bg-black text-white p-4 rounded-b-xl flex flex-col gap-2">
-              <div className="text-sm text-gray-400">Min. Asset Valuation</div>
-              <div className="flex justify-between">
-                <div className="text-xl font-bold">
-                  {asset.price} {asset.currency}
+            <Link href={`/asset-detail/${asset.id}`}>
+              <div className="bg-black text-white p-4 rounded-b-xl flex flex-col gap-2">
+                <div className="text-sm text-gray-400">
+                  Min. Asset Valuation
+                </div>
+                <div className="flex justify-between">
+                  <div className="text-xl font-bold">
+                    {asset.price} {asset.currency}
+                  </div>
                 </div>
               </div>
-            </div>
+            </Link>
           </CardContent>
         </Card>
       ))}

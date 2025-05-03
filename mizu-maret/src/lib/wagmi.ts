@@ -1,6 +1,7 @@
 import { http } from "wagmi";
 import { getDefaultConfig } from "@rainbow-me/rainbowkit";
 import { defineChain } from "viem";
+import { optimismSepolia } from "viem/chains";
 
 export const pharosChain = defineChain({
   id: 50002,
@@ -23,8 +24,9 @@ export const pharosChain = defineChain({
 export const config = getDefaultConfig({
   appName: "MyDApp",
   projectId: "YOUR_PROJECT_ID",
-  chains: [pharosChain],
+  chains: [pharosChain, optimismSepolia],
   transports: {
     [pharosChain.id]: http(),
+    [optimismSepolia.id]: http(),
   },
 });
