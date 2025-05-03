@@ -8,6 +8,10 @@ import {
 } from "@/components/ui/carousel";
 import type { CarouselApi } from "@/components/ui/carousel";
 
+import carousel1 from "@/../public/carousel/mizumaret_comes_to_pharos.png"
+import carousel2 from "@/../public/carousel/pharos_x_mizumaret.png"
+import carousel3 from "@/../public/carousel/mizumaret_ada_gedungnya.png"
+
 function CarouselCustomNavigation() {
   const [api, setApi] = React.useState<CarouselApi>();
   const [current, setCurrent] = React.useState(0);
@@ -18,18 +22,18 @@ function CarouselCustomNavigation() {
   const carouselItems = [
     {
       image:
-        "https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2560&q=80",
-      tagline: "Your Gateway to the World of NFTs",
+        carousel1,
+      tagline: "",
     },
     {
       image:
-        "https://images.unsplash.com/photo-1493246507139-91e8fad9978e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2940&q=80",
-      tagline: "Where Digital Art Meets Ownership",
+        carousel2,
+      tagline: "",
     },
     {
       image:
-        "https://images.unsplash.com/photo-1518623489648-a173ef7824f3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2762&q=80",
-      tagline: "Step into the Next Era of Digital Collectibles",
+        carousel3,
+      tagline: "",
     },
   ];
 
@@ -102,16 +106,13 @@ function CarouselCustomNavigation() {
         <CarouselContent>
           {carouselItems.map((item, index) => (
             <CarouselItem key={index}>
-              <div className="relative h-110 w-full">
+              <div className="relative h-[80vh] w-full">
                 <img
-                  src={item.image || "/placeholder.svg"}
+                  src={item.image.src || "/placeholder.svg"}
                   alt={`Image ${index + 1}`}
                   className="h-full w-full object-cover rounded-3xl"
                 />
                 <div className="absolute bottom-8 left-0 right-0 text-center">
-                  <h2 className="text-white text-xl md:text-2xl lg:text-3xl xl:text-5xl font-bold py-2 px-4 rounded-lg mx-auto inline-block">
-                    {item.tagline}
-                  </h2>
                 </div>
               </div>
             </CarouselItem>
@@ -124,9 +125,8 @@ function CarouselCustomNavigation() {
         {Array.from({ length: count }).map((_, i) => (
           <span
             key={i}
-            className={`block h-1 cursor-pointer rounded-2xl transition-all ${
-              current === i ? "w-10 bg-blue-500" : "w-4 bg-white/50"
-            }`}
+            className={`block h-1 cursor-pointer rounded-2xl transition-all ${current === i ? "w-10 bg-blue-500" : "w-4 bg-white/50"
+              }`}
             onClick={() => handleDotClick(i)}
           />
         ))}
