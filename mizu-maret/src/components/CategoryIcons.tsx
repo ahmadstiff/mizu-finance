@@ -8,7 +8,7 @@ import realestate from '../../public/realestate.jpg'
 import royalty from '../../public/royality.jpg'
 import stocks from '../../public/stocks.jpg'
 
-export type Category = 'collectible' | 'commodity' | 'credit' | 'membership' | 'realestate' | 'royalty' | 'stocks';
+export type Category = 'collectible' | 'commodity' | 'credit' | 'membership' | 'realestate' | 'royality' | 'stocks';
 
 interface CategoryIconsProps {
     selectedCategory: Category | null;
@@ -21,7 +21,7 @@ const categories: { id: Category; label: string; icon: string }[] = [
     { id: 'credit', label: 'Credit', icon: credit.src },
     { id: 'membership', label: 'Membership', icon: membership.src },
     { id: 'realestate', label: 'Real Estate', icon: realestate.src },
-    { id: 'royalty', label: 'Royalties', icon: royalty.src },
+    { id: 'royality', label: 'Royalities', icon: royalty.src },
     { id: 'stocks', label: 'Stocks', icon: stocks.src },
 ];
 
@@ -33,9 +33,9 @@ export function CategoryIcons({ selectedCategory, onSelectCategory }: CategoryIc
                     key={category.id}
                     onClick={() => onSelectCategory(selectedCategory === category.id ? null : category.id)}
                     className={cn(
-                        'flex flex-col items-center gap-2 p-4 rounded-full transition-all',
-                        'hover:bg-gray-100 dark:hover:bg-gray-800',
-                        selectedCategory === category.id && 'bg-gray-100 dark:bg-gray-800'
+                        'flex flex-col items-center gap-2 p-4 rounded-full transition-all cursor-pointer',
+                        'hover:bg-blue-100',
+                        selectedCategory === category.id && 'bg-blue-200'
                     )}
                 >
                     <div className="w-12 h-12 relative">

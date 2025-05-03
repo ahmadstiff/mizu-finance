@@ -9,7 +9,6 @@ export const Page = () => {
   const assetId = params.id;
   return (
     <>
-      <h1>Detail Asset {assetId}</h1>
       <AssetDetailPage />
       <Accordions />
     </>

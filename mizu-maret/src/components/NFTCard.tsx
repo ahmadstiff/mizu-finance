@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useState } from 'react';
 
 interface NFTCardProps {
-    nftAddress: string;
+    id: string;
     title: string;
     thumbnail: string;
     price: string;
@@ -13,11 +13,12 @@ interface NFTCardProps {
     imageUrl: string;
 }
 
-export function NFTCard({ nftAddress, title, thumbnail, price, currency, category, imageUrl }: NFTCardProps) {
+export function NFTCard({ id, title, thumbnail, price, currency, category, imageUrl }: NFTCardProps) {
     const [hovered, setHovered] = useState(false);
 
     // Determine the image source, defaulting to thumbnail if imageUrl is empty
-    const imageSrc = hovered && imageUrl && imageUrl !== '' ? imageUrl : thumbnail && thumbnail !== '' ? thumbnail : '/placeholder.png';
+    // const imageSrc = hovered && imageUrl && imageUrl !== '' ? imageUrl : thumbnail && thumbnail !== '' ? thumbnail : '/placeholder.png';
+    const imageSrc = imageUrl;
 
     return (
         <Card
@@ -35,7 +36,7 @@ export function NFTCard({ nftAddress, title, thumbnail, price, currency, categor
                         height={256}
                     />
                 </div>
-                <Link href={`/asset-detail/${nftAddress}`}>
+                <Link href={`/asset-detail/${id}`}>
                     <div className="bg-blue-700 text-gray-100 mt-auto p-4 rounded-b-sm flex flex-col gap-2 cursor-pointer">
                         <div className="text-xl text-gray-100 font-semibold">{title}</div>
                         <div className="flex justify-between">

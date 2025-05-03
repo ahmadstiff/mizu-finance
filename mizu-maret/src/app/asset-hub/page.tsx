@@ -35,9 +35,7 @@ async function fetchNFTs(category: Category | null = null) {
 }
 
 export default function AssetsPage() {
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
-    null
-  );
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState<SortOption>("newest");
 
@@ -48,21 +46,19 @@ export default function AssetsPage() {
   } = useQuery({
     queryKey: ["nfts", selectedCategory],
     queryFn: () => fetchNFTs(selectedCategory),
-    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+    staleTime: 1000 * 60 * 5,
     retry: 3,
   });
 
   const filteredAndSortedNFTs = useMemo(() => {
     let result = [...nfts];
 
-    // Apply category filter
     if (selectedCategory) {
       result = result.filter(
         (nft) => nft.category.toLowerCase() === selectedCategory.toLowerCase()
       );
     }
 
-    // Apply search filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       result = result.filter(
@@ -72,7 +68,6 @@ export default function AssetsPage() {
       );
     }
 
-    // Apply sorting
     result.sort((a, b) => {
       switch (sortOption) {
         case "newest":
@@ -99,26 +94,64 @@ export default function AssetsPage() {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6">Find your next RWA asset</h1>
 
-      <div className="flex flex-col md:flex-row gap-4 mb-6">
-        <Input
-          type="search"
-          placeholder="Search RWA assets as per categories"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="md:max-w-xl"
-        />
+      <div className="flex flex-col md:flex-row gap-4 mb-6 mx-auto items-center">
+        <div className="relative center flex-1 md:max-w-xl">
+          <div className="absolute inset-y-0 left-0 flex items-center mx-auto ml-2 pointer-events-none">
+            <svg
+              className="w-5 h-5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"
+              />
+            </svg>
+          </div>
+          <Input
+            type="search"
+            placeholder="Search RWA assets as per categories"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10 pr-4 py-3 w-full rounded-lg border border-gray-200 bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:shadow-md"
+          />
+        </div>
         <Select
           value={sortOption}
           onValueChange={(value) => setSortOption(value as SortOption)}
         >
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-[180px] rounded-lg border border-gray-200 bg-white shadow-sm hover:shadow-md transition-all duration-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="newest">Newest First</SelectItem>
-            <SelectItem value="oldest">Oldest First</SelectItem>
-            <SelectItem value="price-high">Price: High to Low</SelectItem>
-            <SelectItem value="price-low">Price: Low to High</SelectItem>
+          <SelectContent className="rounded-lg border border-gray-200 bg-white shadow-lg">
+            <SelectItem
+              value="newest"
+              className="hover:bg-blue-50 transition-colors duration-200"
+            >
+              Newest First
+            </SelectItem>
+            <SelectItem
+              value="oldest"
+              className="hover:bg-blue-50 transition-colors duration-200"
+            >
+              Oldest First
+            </SelectItem>
+            <SelectItem
+              value="price-high"
+              className="hover:bg-blue-50 transition-colors duration-200"
+            >
+              Price: High to Low
+            </SelectItem>
+            <SelectItem
+              value="price-low"
+              className="hover:bg-blue-50 transition-colors duration-200"
+            >
+              Price: Low to High
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -143,10 +176,11 @@ export default function AssetsPage() {
           {filteredAndSortedNFTs.map((nft) => (
             <NFTCard
               key={nft.id}
-              id={nft.id}
               title={nft.title}
               thumbnail={nft.thumbnail}
               price={nft.price}
+              id={nft.id.toString()}
+              imageUrl={nft.imageUrl}
               currency={nft.currency}
               category={nft.category}
             />
