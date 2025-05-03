@@ -7,6 +7,7 @@ import {
   Youtube,
   MessageSquare,
 } from "lucide-react";
+import Image from "next/image";
 
 export default function Footer() {
   return (
@@ -18,24 +19,7 @@ export default function Footer() {
             <div className="mb-6">
               <Link href="/" className="inline-block">
                 <div className="flex items-center">
-                  <svg
-                    width="40"
-                    height="40"
-                    viewBox="0 0 40 40"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="mr-2"
-                  >
-                    <path
-                      d="M20 0L36.6 10V30L20 40L3.4 30V10L20 0Z"
-                      fill="white"
-                    />
-                    <path
-                      d="M20 8L28.6 13V23L20 28L11.4 23V13L20 8Z"
-                      fill="black"
-                    />
-                  </svg>
-                  <span className="font-bold text-xl">POLYTRADE</span>
+                  <span className="font-bold text-xl">Mizu Finance</span>
                 </div>
               </Link>
             </div>
@@ -88,7 +72,7 @@ export default function Footer() {
                 Press
               </Link>
               <Link href="#" className="text-gray-300 hover:text-white">
-                Polytrade 2.0 Overview
+                Mizu finance Overview
               </Link>
               <Link href="#" className="text-gray-300 hover:text-white">
                 Contact Us
@@ -163,7 +147,7 @@ export default function Footer() {
         {/* Bottom section with copyright and legal links */}
         <div className="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-start md:items-center">
           <p className="text-gray-400 text-sm">
-            © 2024 Polytrade. All rights reserved.
+            © 2025 Mizu Finance. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <Link href="#" className="text-gray-400 hover:text-white text-sm">
