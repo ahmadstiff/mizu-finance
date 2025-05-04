@@ -2,7 +2,7 @@
 
 Welcome to Mizumaret, the global marketplace for tokenized real-world assets (RWA) powered by the Pharos ecosystem and ERC-6960 dual-layer token standard.
 
-[Go to site](website https://mizu-maret.vercel.app/)
+[Go to site](https://mizu-maret.vercel.app/)
 
 ![image]()
 
