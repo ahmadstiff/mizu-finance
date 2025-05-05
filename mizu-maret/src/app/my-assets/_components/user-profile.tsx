@@ -25,7 +25,7 @@ const UserProfile = () => {
           </div>
         </CardContent>
       </Card>
-      <Link href="/addnft">
+      <Link href="/my-assets/addnft">
         <Button>Add NFT</Button>
       </Link>
     </div>

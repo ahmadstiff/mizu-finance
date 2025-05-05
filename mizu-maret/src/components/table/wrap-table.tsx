@@ -17,10 +17,10 @@ import WrapAssetDialog from "../dialog/wrap-dialog";
 export default function AssetTable() {
   const { address } = useAccount();
   const asset = {
-    name: "1992 X-Men Series I #XH-2 Cable - Hologram (CGC 7 NM)",
+    name: "Burj Khalifa Card",
     standard: "ERC721",
-    protocol: "Courtyard",
-    network: "Polygon",
+    protocol: "MizuCol",
+    network: "Pharos",
     wallet: address,
   };
 

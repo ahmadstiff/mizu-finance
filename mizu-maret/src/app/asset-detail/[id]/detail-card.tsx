@@ -15,19 +15,15 @@ export default function AssetDetailPage() {
       </div>
       <div className="w-full lg:w-2/3 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <span className="text-sm text-gray-700">Lamp</span>
-          <span className="text-sm text-gray-700">icon</span>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <InfoCard label="Asset Category" value="Collectibles" />
-          <InfoCard label="Token ID" value="10" copyable />
-          <InfoCard label="Protocol" value="Polytrade x Zia" hasLink />
+          <InfoCard label="Token ID" value="0" copyable />
+          <InfoCard label="Protocol" value="MizuPlace" hasLink />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <InfoCard label="Sector" value="Non Alcoholic Beverages" />
-          <InfoCard label="Underlying" value="Soda" />
-          <InfoCard label="Contract Address" value="0x1167...85f6" copyable />
+          <InfoCard label="Underlying" value="MZU" />
+          <InfoCard label="Contract Address" value="0x58...392" copyable />
         </div>
         <TagsCard />
         <div className="flex justify-end gap-4">

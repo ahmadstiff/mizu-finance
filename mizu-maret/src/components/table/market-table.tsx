@@ -17,13 +17,13 @@ import ListingAssetDialog from "../dialog/listing-dialog";
 export default function MarketTable() {
   const { address } = useAccount();
   const asset = {
-    name: "1992 X-Men Series I #XH-2 Cable - Hologram (CGC 7 NM)",
-    standard: "ERC721",
-    protocol: "Courtyard",
-    network: "Polygon",
+    name: "Burj Khalfa Card",
+    standard: "ERC6960",
+    protocol: "MizuCol",
+    network: "Pharos",
     wallet: address,
     fraction:"100",
-    fractionAmount:"100",
+    fractionAmount:"10",
     status:"Listed",
   };
 
@@ -34,7 +34,7 @@ export default function MarketTable() {
       {/* Header */}
       <div className="flex items-center gap-2 mb-4 text-sm font-medium text-gray-700">
         <span className="text-blue-500">ℹ️</span>
-        <span className="text-gray-900 text-xl font-semibold">Available on Markertplace: 0</span>
+        <span className="text-gray-900 text-xl font-semibold">Available on Markertplace: 1</span>
       </div>
 
       {/* Table */}
@@ -42,11 +42,12 @@ export default function MarketTable() {
         <TableHeader>
           <TableRow>
             <TableHead>Asset Name</TableHead>
-            <TableHead>Protocol</TableHead>
-            <TableHead>Asset Valuation</TableHead>
+            <TableHead>Standardl</TableHead>
+        
             <TableHead>fraction %</TableHead>
             <TableHead>Fraction Amount</TableHead>
             <TableHead>Status</TableHead>
+            <TableHead>Wallet</TableHead>
             <TableHead className="text-center">Action</TableHead>
           </TableRow>
         </TableHeader>
@@ -55,7 +56,7 @@ export default function MarketTable() {
           <TableRow>
 
             <TableCell>{asset.name}</TableCell>
-            <TableCell>{asset.protocol}</TableCell>
+            <TableCell>{asset.standard}</TableCell>
             <TableCell>{asset.fraction}</TableCell>
             <TableCell>{asset.fractionAmount}</TableCell>
             <TableCell>{asset.status}</TableCell>

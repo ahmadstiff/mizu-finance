@@ -47,7 +47,7 @@ function AssetDetail() {
       <p className="text-lg mb-2">
         Price: {asset.price} {asset.currency}
       </p>
-      <p className="text-gray-700">{asset.description}</p>
+      {/* <p className="text-gray-700">{asset.description}</p> */}
     </div>
   );
 }
