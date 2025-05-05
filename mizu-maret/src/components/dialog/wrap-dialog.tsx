@@ -9,6 +9,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import useWrapERC721 from "@/hooks/useWrapNft";
 import { ReactNode } from "react";
 
 interface WrapAssetDialogProps {
@@ -16,11 +20,32 @@ interface WrapAssetDialogProps {
 }
 
 export default function WrapAssetDialog({ trigger }: WrapAssetDialogProps) {
+  const [tokenId, setTokenId] = useState("");
+  const [nftAddress, setNftAddress] = useState("");
+  const [fragments, setFragments] = useState("");
+
+  const {
+    handleApproveNft,
+    isApprovePending,
+    isApproving,
+    isApproved,
+    isWrapping,
+    isWrapped,
+  } = useWrapERC721();
+
+  const handleWrap = async () => {
+    await handleApproveNft({
+      tokenId: BigInt(tokenId),
+      nftAddress: nftAddress as `0x${string}`,
+      fragments: BigInt(fragments),
+    });
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-
       <DialogContent className="max-w-md rounded-xl p-0 overflow-hidden">
+
         <div className="bg-white">
           <div className="flex flex-col items-center p-6">
             <Image
@@ -30,32 +55,54 @@ export default function WrapAssetDialog({ trigger }: WrapAssetDialogProps) {
               height={300}
               className="rounded-md object-contain"
             />
-            <h2 className="mt-4 text-lg font-semibold text-gray-900">
-              Wrap Asset
-            </h2>
+            <DialogTitle className="mt-4 text-lg font-semibold text-gray-900">
+              Taylor Swift Album
+            </DialogTitle>
           </div>
 
-          <div className="border-t p-4 text-sm text-gray-600">
-            <div className="mb-2">
-              <span className="block font-medium text-gray-500">
-                Asset Name
-              </span>
-              <span className="text-gray-900">
-                1992 X-Men Series I #XH-2 Cable - Hologram (CGC 7 NM)
-              </span>
+          <div className="border-t p-4 space-y-3 text-sm text-gray-600">
+            <div>
+              <Label htmlFor="tokenId">Token ID</Label>
+              <Input
+                id="tokenId"
+                value={tokenId}
+                onChange={(e) => setTokenId(e.target.value)}
+              />
             </div>
-            <div className="mb-2">
-              <span className="block font-medium text-gray-500">Standard</span>
-              <span className="text-gray-900">ERC721</span>
+            <div>
+              <Label htmlFor="nftAddress">NFT Address</Label>
+              <Input
+                id="nftAddress"
+                value={nftAddress}
+                onChange={(e) => setNftAddress(e.target.value)}
+              />
             </div>
-            <div className="mb-4">
-              <span className="block font-medium text-gray-500">Network</span>
-              <span className="text-gray-900">Polygon</span>
+            <div>
+              <Label htmlFor="fragments">Fragments</Label>
+              <Input
+                id="fragments"
+                value={fragments}
+                onChange={(e) => setFragments(e.target.value)}
+              />
             </div>
 
-            <Button className="w-full bg-black text-white hover:bg-gray-800">
-              Wrap into ERC-6960
+            <Button
+              className="w-full bg-black text-white hover:bg-gray-800"
+              onClick={handleWrap}
+              disabled={isApprovePending || isApproving || isWrapping}
+            >
+              {isWrapping
+                ? "Wrapping..."
+                : isApproving
+                ? "Approving..."
+                : "Wrap into ERC-6960"}
             </Button>
+
+            {isWrapped && (
+              <p className="text-sm text-green-600 mt-2">
+                ✅ Asset successfully wrapped!
+              </p>
+            )}
           </div>
         </div>
       </DialogContent>

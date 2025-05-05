@@ -12,7 +12,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, Plus } from "lucide-react";
 import { useAccount } from "wagmi";
-import WrapAssetDialog from "../dialog/wrap-dialog";
+import ListingAssetDialog from "../dialog/listing-dialog";
 
 export default function MarketTable() {
   const { address } = useAccount();
@@ -61,7 +61,7 @@ export default function MarketTable() {
             <TableCell>{asset.status}</TableCell>
             <TableCell>{shorten(String(asset.wallet))}</TableCell>
             <TableCell className="flex justify-center">
-              <WrapAssetDialog
+              <ListingAssetDialog
                 trigger={
                   <Button
                     variant="outline"
@@ -69,7 +69,7 @@ export default function MarketTable() {
                     className="mx-auto flex items-center gap-1"
                   >
                     <Plus className="w-4 h-4" />
-                    Wrap
+                    List
                   </Button>
                 }
               />
