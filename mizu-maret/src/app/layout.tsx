@@ -19,15 +19,15 @@ interface RootLayoutProps {
 }
 
 export const metadata: Metadata = {
-  title: "Mizu Finance",
+  title: "Mizu Maret",
   description: "Platform to buy and sell NFTs",
   icons: {
     icon: [
-      { url: "./mizu-finance.png", type: "image/png" },
+      { url: "./mizumaret.png", type: "image/png" },
       { url: "/mizu-finance.png", type: "image/png" },
       { url: "/favicon.ico", type: "image/x-icon" },
     ],
-    apple: [{ url: "/caer.png", type: "image/png" }],
+    apple: [{ url: "/mizumaret.png", type: "image/png" }],
   },
 };
 

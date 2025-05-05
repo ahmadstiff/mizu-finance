@@ -32,7 +32,7 @@ export default function Navbar() {
             <span className="text-xl font-bold">
               <NextImage
                 alt="Mizu"
-                src="/mizu-finance.png"
+                src="/mizumaret.png"
                 width={150}
                 height={90}
               />
