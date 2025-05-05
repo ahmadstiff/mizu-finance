@@ -144,9 +144,10 @@ export default function NftForm() {
           <SelectValue placeholder="Tags" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="art">Art</SelectItem>
-          <SelectItem value="music">Music</SelectItem>
-          <SelectItem value="collectible">Collectible</SelectItem>
+          <SelectItem value="Real Estate">Real Estate</SelectItem>
+          <SelectItem value="Picture">Picture</SelectItem>
+          <SelectItem value="Yield">Yield</SelectItem>
+          <SelectItem value="Music Yield">Music Yield</SelectItem>
         </SelectContent>
       </Select>
 
@@ -190,12 +191,12 @@ export default function NftForm() {
         onValueChange={(v) => handleSelectChange("category", v)}
       >
         <SelectTrigger>
-          <SelectValue placeholder="category" > </SelectValue> 
+          <SelectValue placeholder="Category" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="royality">Royality</SelectItem>
-          <SelectItem value="Commodities">Commodities</SelectItem>
-          <SelectItem value="Collectibles">Collectibles</SelectItem>
+          <SelectItem value="Music">Music</SelectItem>
+          <SelectItem value="Comodity">Comodity</SelectItem>
+          <SelectItem value="Non Alcohol">Non Alcohol</SelectItem>
         </SelectContent>
       </Select>
       <Select
@@ -207,8 +208,8 @@ export default function NftForm() {
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="LISTED">LISTED</SelectItem>
-          <SelectItem value="SOLD">SOLD</SelectItem>
-          <SelectItem value="PENDING">PENDING</SelectItem>
+          <SelectItem value="Available">Available</SelectItem>
+          <SelectItem value="Wrapped">Wrapped</SelectItem>
         </SelectContent>
       </Select>
       <Button type="submit" className="mt-4">
