@@ -19,7 +19,7 @@ export default function Footer() {
             <div className="mb-6">
               <Link href="/" className="inline-block">
                 <div className="flex items-center">
-                  <span className="font-bold text-xl">Mizu Finance</span>
+                  <span className="font-bold text-xl">Mizu Maret</span>
                 </div>
               </Link>
             </div>
@@ -72,7 +72,7 @@ export default function Footer() {
                 Press
               </Link>
               <Link href="#" className="text-gray-300 hover:text-white">
-                Mizu finance Overview
+                Mizu Maret Overview
               </Link>
               <Link href="#" className="text-gray-300 hover:text-white">
                 Contact Us
@@ -147,7 +147,7 @@ export default function Footer() {
         {/* Bottom section with copyright and legal links */}
         <div className="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-start md:items-center">
           <p className="text-gray-400 text-sm">
-            © 2025 Mizu Finance. All rights reserved.
+            © 2025 Mizu Maret. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <Link href="#" className="text-gray-400 hover:text-white text-sm">
