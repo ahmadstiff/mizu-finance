@@ -1,5 +1,5 @@
 import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
-import { mizuMarketplace, mockUsdc } from "@/contstants/addresses";
+import { mizuMarketplace, mockUsdc } from "@/constants/addresses";
 import { mizuMarketplaceAbi } from "@/lib/Abis/mizuMarketplace";
 import { mockErc20Abi } from "@/lib/Abis/mockErc20Abi";
 

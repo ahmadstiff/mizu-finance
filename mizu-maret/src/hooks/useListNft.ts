@@ -1,44 +1,56 @@
 import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import { mizuMarketplace } from "@/constants/addresses";
 import { mizuMarketplaceAbi } from "@/lib/Abis/mizuMarketplace";
-import { mizuMarketplace } from "@/contstants/addresses";
 
-export function useListNft() {
-  const { data: txHash, isPending, writeContract, error } = useWriteContract();
+type ListNftParams = {
+  tokenId: bigint;
+  collectionId: bigint;
+  price: bigint;
+  fragments: bigint;
+  royaltyPercentage: bigint;
+  royaltyReceiver: `0x${string}`;
+};
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } =
-    useWaitForTransactionReceipt({
-      hash: txHash,
-    });
+function useListNft() {
+  const {
+    data: listHash,
+    isPending: isListPending,
+    writeContract,
+  } = useWriteContract();
 
-  const listNft = async ({
+  const { isLoading: isListing, isSuccess: isListed } =
+    useWaitForTransactionReceipt({ hash: listHash });
+
+  const handleListNft = async ({
     tokenId,
-    subId,
+    collectionId,
+    price,
     fragments,
-    priceUnit,
-    minPurchase,
-    paymentToken,
-  }: {
-    tokenId: bigint;
-    subId: bigint;
-    fragments: bigint;
-    priceUnit: bigint;
-    minPurchase: bigint;
-    paymentToken: `0x${string}`;
-  }) => {
-    await writeContract({
+    royaltyPercentage,
+    royaltyReceiver,
+  }: ListNftParams) => {
+    return await writeContract({
       abi: mizuMarketplaceAbi,
       address: mizuMarketplace,
       functionName: "listERC6960",
-      args: [tokenId, subId, fragments, priceUnit, minPurchase, paymentToken],
+      args: [
+        tokenId,
+        collectionId,
+        fragments,
+        price,
+        royaltyPercentage,
+        royaltyReceiver,
+      ],
     });
   };
 
   return {
-    listNft,
-    txHash,
-    isPending,
-    isConfirming,
-    isConfirmed,
-    error,
+    handleListNft,
+    txHash: listHash,
+    isPending: isListPending,
+    isListing,
+    isListed,
   };
 }
+
+export default useListNft;

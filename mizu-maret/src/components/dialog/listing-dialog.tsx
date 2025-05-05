@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import { useListNft } from "@/hooks/useListNft";
+import useListNft from "@/hooks/useListNft";
 import { useAccount, useConnect } from "wagmi";
 
 export default function ListingAssetDialog({
@@ -28,18 +28,21 @@ export default function ListingAssetDialog({
   const [paymentToken, setPaymentToken] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Get wallet connection state
   const { address, isConnected } = useAccount();
   const { connect, connectors } = useConnect();
 
-  const { listNft, txHash, isPending, isConfirming, isConfirmed } =
-    useListNft();
+  const {
+    handleListNft,
+    txHash: listHash,
+    isPending: isListPending,
+    isListing,
+    isListed,
+  } = useListNft();
 
   const handleList = async () => {
     try {
       setErrorMessage(null);
 
-      // Check if wallet is connected
       if (!isConnected || !address) {
         setErrorMessage("Please connect your wallet to list an NFT.");
         return;
@@ -59,13 +62,13 @@ export default function ListingAssetDialog({
       }
 
       const DECIMALS = BigInt(10 ** 6);
-      await listNft({
+      await handleListNft({
         tokenId: BigInt(tokenId),
-        subId: BigInt(subId),
+        collectionId: BigInt(subId),
+        price: BigInt(priceUnit) * DECIMALS,
         fragments: BigInt(fragments),
-        priceUnit: BigInt(priceUnit) * DECIMALS,
-        minPurchase: BigInt(minPurchase) * DECIMALS,
-        paymentToken: paymentToken as `0x${string}`,
+        royaltyPercentage: BigInt(0), // default? bisa disesuaikan
+        royaltyReceiver: address,
       });
     } catch (error) {
       console.error("Listing failed:", error);
@@ -155,10 +158,10 @@ export default function ListingAssetDialog({
           ) : (
             <Button
               onClick={handleList}
-              disabled={isPending || isConfirming}
+              disabled={isListPending || isListed}
               className="w-full"
             >
-              {isPending || isConfirming ? "Processing..." : "List NFT"}
+              {isListPending || isListing ? "Processing..." : "List NFT"}
             </Button>
           )}
         </DialogFooter>
@@ -167,9 +170,9 @@ export default function ListingAssetDialog({
           <p className="text-sm text-red-600 mt-2">Error: {errorMessage}</p>
         )}
 
-        {isConfirmed && (
+        {isListing && (
           <p className="text-sm text-green-600 mt-2">
-            ✅ Transaction successful: {txHash?.slice(0, 10)}...
+            ✅ Transaction successful: {isListing}...
           </p>
         )}
       </DialogContent>
