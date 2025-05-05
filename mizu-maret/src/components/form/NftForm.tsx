@@ -194,9 +194,11 @@ export default function NftForm() {
           <SelectValue placeholder="Category" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="Music">Music</SelectItem>
-          <SelectItem value="Comodity">Comodity</SelectItem>
-          <SelectItem value="Non Alcohol">Non Alcohol</SelectItem>
+          <SelectItem value="Royality">Royality</SelectItem>
+          <SelectItem value="Real Estate">Real Estate</SelectItem>
+          <SelectItem value="Collectibles">Non Alcohol</SelectItem>
+          <SelectItem value="Membership">Membership</SelectItem>
+          <SelectItem value="Stocks">Stocks</SelectItem>
         </SelectContent>
       </Select>
       <Select
