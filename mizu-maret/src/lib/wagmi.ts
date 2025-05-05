@@ -1,19 +1,18 @@
 import { http } from "wagmi";
 import { getDefaultConfig } from "@rainbow-me/rainbowkit";
 import { defineChain } from "viem";
-import { optimismSepolia } from "viem/chains";
 
 export const pharosChain = defineChain({
-  id: 50002,
+  id: 11155420,
   name: "Pharos Devnet",
   nativeCurrency: { name: "ETH", symbol: "ETH", decimals: 18 },
   rpcUrls: {
-    default: { http: ["https://devnet.dplabs-internal.com"] },
+    default: { http: ["https://sepolia.optimism.io"] },
   },
   blockExplorers: {
     default: {
       name: "Blockscout",
-      url: "https://pharosscan.xyz/",
+      url: "https://optimism-sepolia.blockscout.com",
     },
   },
   testnet: true,
@@ -24,9 +23,8 @@ export const pharosChain = defineChain({
 export const config = getDefaultConfig({
   appName: "MyDApp",
   projectId: "YOUR_PROJECT_ID",
-  chains: [pharosChain, optimismSepolia],
+  chains: [pharosChain],
   transports: {
     [pharosChain.id]: http(),
-    [optimismSepolia.id]: http(),
   },
 });
