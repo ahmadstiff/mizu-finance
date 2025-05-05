@@ -1,7 +1,7 @@
 import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
-import { mizuMarketplace, musicRoyalities } from "@/contstants/addresses";
+import { mizuMarketplace,property } from "@/contstants/addresses";
 import { mizuMarketplaceAbi } from "@/lib/Abis/mizuMarketplace";
-import { musicRoyalitiesAbi } from "@/lib/Abis/musicRoyalities";
+import { propertyAbi } from "@/lib/Abis/property";
 
 export default function useWrapERC721() {
   const {
@@ -32,8 +32,8 @@ export default function useWrapERC721() {
     fragments: bigint;
   }) => {
     await approveNft({
-      abi: musicRoyalitiesAbi,
-      address: musicRoyalities,
+      abi: propertyAbi,
+      address: property,
       functionName: "approve",
       args: [mizuMarketplace, tokenId],
     });
