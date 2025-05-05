@@ -29,7 +29,7 @@ const initialFormData: NftFormData = {
   imageUrl: "",
   price: "",
   currency: "ETH",
-  category: "commodities",
+  category: "commodity",
   status: "LISTED",
 };
 
@@ -148,6 +148,11 @@ export default function NftForm() {
           <SelectItem value="Picture">Picture</SelectItem>
           <SelectItem value="Yield">Yield</SelectItem>
           <SelectItem value="Music Yield">Music Yield</SelectItem>
+          <SelectItem value="Digital Assets">Digital Assets</SelectItem>
+          <SelectItem value="Property">Property</SelectItem>
+          <SelectItem value="Luxury Property">Luxury Property</SelectItem>
+          <SelectItem value="Artist Revenue">Artist Revenue</SelectItem>
+          <SelectItem value="Stock Dividend">Stock Dividend</SelectItem>
         </SelectContent>
       </Select>
 
@@ -196,8 +201,10 @@ export default function NftForm() {
         <SelectContent>
           <SelectItem value="Royality">Royality</SelectItem>
           <SelectItem value="Real Estate">Real Estate</SelectItem>
-          <SelectItem value="Collectibles">Non Alcohol</SelectItem>
+          <SelectItem value="Collectible">Collectible</SelectItem>
           <SelectItem value="Membership">Membership</SelectItem>
+          <SelectItem value="Comodity">Comodity</SelectItem>
+          <SelectItem value="Credit">Credit</SelectItem>
           <SelectItem value="Stocks">Stocks</SelectItem>
         </SelectContent>
       </Select>
