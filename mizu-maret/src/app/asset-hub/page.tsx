@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from "react";
 import { CategoryIcons, type Category } from "@/components/CategoryIcons";
-import { NFTCard } from "@/components/NFTCard";
 import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
 import type { NFT } from "@/types/nft";
@@ -13,14 +12,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from 'next/navigation';
+
 
 type SortOption = "newest" | "oldest" | "price-high" | "price-low";
 
 async function fetchNFTs(category: Category | null = null) {
   try {
     const response = await fetch(
-      `https://mizu-backend-one.vercel.app/api/nfts${
-        category ? `?category=${category.toLowerCase()}` : ""
+      `https://mizu-backend-one.vercel.app/api/nfts${category ? `?category=${category.toLowerCase()}` : ""
       }`
     );
     if (!response.ok) {
@@ -35,6 +45,7 @@ async function fetchNFTs(category: Category | null = null) {
 }
 
 export default function AssetsPage() {
+  const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
     null
   );
@@ -93,13 +104,13 @@ export default function AssetsPage() {
   }, [nfts, selectedCategory, searchQuery, sortOption]);
 
   return (
-    <div className="mx-8 ">
-      <div className="container px-4 py-8">
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto px-4 py-8 max-w-[85vw]">
         <h1 className="text-3xl font-bold mb-6">Find your next RWA asset</h1>
 
-        <div className="flex flex-col md:flex-row gap-4 mb-6 mx-auto items-center">
-          <div className="relative center flex-1 md:max-w-xl">
-            <div className="absolute inset-y-0 left-0 flex items-center mx-auto ml-2 pointer-events-none">
+        <div className="flex flex-col md:flex-row gap-4 mb-6 items-center">
+          <div className="relative flex-1 w-full">
+            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
               <svg
                 className="w-5 h-5 text-gray-400"
                 fill="none"
@@ -120,14 +131,14 @@ export default function AssetsPage() {
               placeholder="Search RWA assets as per categories"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 pr-4 py-3 w-full rounded-lg border border-gray-200 bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:shadow-md"
+              className="pl-10 pr-4 py-6 w-full rounded-lg border border-gray-200 bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:shadow-md"
             />
           </div>
           <Select
             value={sortOption}
             onValueChange={(value) => setSortOption(value as SortOption)}
           >
-            <SelectTrigger className="w-[180px] rounded-lg border border-gray-200 bg-white shadow-sm hover:shadow-md transition-all duration-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <SelectTrigger className="w-[180px] py-6 rounded-lg border border-gray-200 bg-white shadow-sm hover:shadow-md transition-all duration-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent className="rounded-lg border border-gray-200 bg-white shadow-lg">
@@ -175,21 +186,64 @@ export default function AssetsPage() {
             <p className="text-sm mt-2">Please try again later</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8">
-            {filteredAndSortedNFTs.map((nft) => (
-              <NFTCard
-                key={nft.id}
-                title={nft.title}
-                thumbnail={nft.thumbnail}
-                price={nft.price}
-                id={nft.id.toString()}
-                imageUrl={nft.imageUrl}
-                currency={nft.currency}
-                category={nft.category}
-              />
-            ))}
+          <div className="mt-8 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-gray-50 ">
+                  <TableHead className="w-[150px] py-4 text-lg">Asset</TableHead>
+                  <TableHead className="text-lg">Title</TableHead>
+                  <TableHead className="text-lg">Category</TableHead>
+                  <TableHead className="text-lg">Price</TableHead>
+                  <TableHead className="text-lg">Status</TableHead>
+                  <TableHead className="text-lg">Tags</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredAndSortedNFTs.map((nft) => (
+                  <TableRow
+                    key={nft.id}
+                    className="hover:bg-gray-50 cursor-pointer"
+                    onClick={() => router.push(`/asset-detail/${nft.id}`)}
+                  >
+                    <TableCell>
+                      <div className="relative w-24 h-24">
+                        <Image
+                          src={nft.thumbnail || nft.imageUrl}
+                          alt={nft.title}
+                          fill
+                          className="object-cover rounded-md"
+                        />
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-base font-medium text-gray-600">
+                      {nft.title}
+                    </TableCell>
+                    <TableCell className="text-base">{nft.category}</TableCell>
+                    <TableCell className="font-medium text-base">{`${nft.price} ${nft.currency}`}</TableCell>
+                    <TableCell>
+                      <span className={`px-3 py-1.5 rounded-full text-sm ${nft.status === 'LISTED' ? 'bg-green-100 text-green-800' :
+                        nft.status === 'UNLISTED' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}>
+                        {nft.status}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap gap-2">
+                        {nft.tags?.split(',').map((tag, index) => (
+                          <span key={index} className="px-3 py-1.5 bg-gray-100 rounded-full text-sm">
+                            {tag.trim()}
+                          </span>
+                        ))}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+
+                ))}
+              </TableBody>
+            </Table>
             {filteredAndSortedNFTs.length === 0 && (
-              <div className="col-span-full text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-gray-500">
                 <p className="text-lg font-semibold">No NFTs found</p>
                 <p className="text-sm mt-2">
                   {selectedCategory

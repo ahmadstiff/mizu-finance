@@ -1,6 +1,7 @@
 import { Category } from "@/components/CategoryIcons";
 
 export interface NFT {
+  tags: string;
   id: number;
   title: string;
   description: string;
