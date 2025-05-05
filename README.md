@@ -54,11 +54,9 @@ Mizumaret empowers a new era of on-chain finance by bridging real-world assets w
 
 ## 🔗 Links
 
-- **Website:** <a href="" target="_blank"></a>
-- **X:** <a href="" target="_blank"></a>
-- **Documentation:** <a href="" target="_blank"></a>
-- **Organization:** <a href="" target="_blank"></a>
-- **Video Demo Application:** <a ></a>
-- **Video Presentation:** <a >/a>
-- **Presentation Slides:** <a href="" target="_blank">Canva Slides</a>
+- **Website:** <a href="https://mizu-maret.vercel.app/" target="_blank">https://mizu-maret.vercel.app/</a>
+- **Documentation:** <a href="https://mizumaret-docs.gitbook.io/mizumaret-docs/" target="_blank">https://mizumaret-docs.gitbook.io/mizumaret-docs/</a>
+- **Organization:** <a href="https://github.com/ahmadstiff/mizu-maret" target="_blank">https://github.com/ahmadstiff/mizu-maret</a>
+- **Presentation Slides:** <a href="https://www.canva.com/design/DAGlXpsGoXQ/wNWDfS8PQj6j2cZlOQpsXw/edit?utm_content=DAGlXpsGoXQ&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
+" target="_blank">Canva Slides</a>
 
