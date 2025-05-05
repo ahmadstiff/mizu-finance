@@ -17,8 +17,8 @@ export function NFTCard({ id, title, thumbnail, price, currency, category, image
     const [hovered, setHovered] = useState(false);
 
     // Determine the image source, defaulting to thumbnail if imageUrl is empty
-    // const imageSrc = hovered && imageUrl && imageUrl !== '' ? imageUrl : thumbnail && thumbnail !== '' ? thumbnail : '/placeholder.png';
-    const imageSrc = imageUrl;
+    const imageSrc = hovered && imageUrl && imageUrl !== '' ? imageUrl : thumbnail && thumbnail !== '' ? thumbnail : '/placeholder.png';
+    // const imageSrc = imageUrl;
 
     return (
         <Card
