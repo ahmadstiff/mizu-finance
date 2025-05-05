@@ -3,6 +3,7 @@ import Footer from "@/components/footer";
 import HeroImage from "@/components/hero/hero-image";
 import React from "react";
 import RecommendationAssets from "./_components/recomend-assets";
+import RecommendationRoyality from "./_components/reccomendation-royality";
 
 const HomePage = () => {
   return (
@@ -11,6 +12,7 @@ const HomePage = () => {
         <CarouselCustomNavigation />
         <HeroImage />
         <RecommendationAssets />
+        <RecommendationRoyality />
       </div>
       <Footer />
     </>

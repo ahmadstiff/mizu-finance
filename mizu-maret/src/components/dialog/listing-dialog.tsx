@@ -1,5 +1,4 @@
 "use client";
-
 import {
   Dialog,
   DialogTrigger,
@@ -7,12 +6,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { useListNft } from "@/hooks/useListNft";
+import { useAccount, useConnect } from "wagmi";
 
 export default function ListingAssetDialog({
   trigger,
@@ -25,19 +26,60 @@ export default function ListingAssetDialog({
   const [priceUnit, setPriceUnit] = useState("");
   const [minPurchase, setMinPurchase] = useState("");
   const [paymentToken, setPaymentToken] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Get wallet connection state
+  const { address, isConnected } = useAccount();
+  const { connect, connectors } = useConnect();
 
   const { listNft, txHash, isPending, isConfirming, isConfirmed } =
     useListNft();
 
   const handleList = async () => {
-    await listNft({
-      tokenId: BigInt(tokenId),
-      subId: BigInt(subId),
-      fragments: BigInt(fragments),
-      priceUnit: BigInt(priceUnit),
-      minPurchase: BigInt(minPurchase),
-      paymentToken: paymentToken as `0x${string}`,
-    });
+    try {
+      setErrorMessage(null);
+
+      // Check if wallet is connected
+      if (!isConnected || !address) {
+        setErrorMessage("Please connect your wallet to list an NFT.");
+        return;
+      }
+
+      // Validate inputs
+      if (
+        !tokenId ||
+        !subId ||
+        !fragments ||
+        !priceUnit ||
+        !minPurchase ||
+        !paymentToken
+      ) {
+        setErrorMessage("Please fill in all required fields.");
+        return;
+      }
+
+      const DECIMALS = BigInt(10 ** 6);
+      await listNft({
+        tokenId: BigInt(tokenId),
+        subId: BigInt(subId),
+        fragments: BigInt(fragments),
+        priceUnit: BigInt(priceUnit) * DECIMALS,
+        minPurchase: BigInt(minPurchase) * DECIMALS,
+        paymentToken: paymentToken as `0x${string}`,
+      });
+    } catch (error) {
+      console.error("Listing failed:", error);
+      setErrorMessage(
+        error instanceof Error ? error.message : "Unknown error occurred"
+      );
+    }
+  };
+
+  // Connect wallet function
+  const handleConnectWallet = () => {
+    if (connectors[0]) {
+      connect({ connector: connectors[0] });
+    }
   };
 
   return (
@@ -46,6 +88,9 @@ export default function ListingAssetDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Listing Your Asset</DialogTitle>
+          <DialogDescription>
+            Enter the details to list your NFT on the marketplace.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
@@ -74,11 +119,12 @@ export default function ListingAssetDialog({
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="priceUnit">Price Unit (in wei)</Label>
+            <Label htmlFor="priceUnit">Price Unit</Label>
             <Input
               id="priceUnit"
               value={priceUnit}
               onChange={(e) => setPriceUnit(e.target.value)}
+              placeholder="Enter price (will be multiplied by 10^6)"
             />
           </div>
           <div className="grid gap-2">
@@ -87,6 +133,7 @@ export default function ListingAssetDialog({
               id="minPurchase"
               value={minPurchase}
               onChange={(e) => setMinPurchase(e.target.value)}
+              placeholder="Enter minimum purchase amount"
             />
           </div>
           <div className="grid gap-2">
@@ -95,15 +142,30 @@ export default function ListingAssetDialog({
               id="paymentToken"
               value={paymentToken}
               onChange={(e) => setPaymentToken(e.target.value)}
+              placeholder="0x..."
             />
           </div>
         </div>
 
-        <DialogFooter>
-          <Button onClick={handleList} disabled={isPending || isConfirming}>
-            {isPending || isConfirming ? "Processing..." : "Listing"}
-          </Button>
+        <DialogFooter className="flex flex-col sm:flex-row gap-2">
+          {!isConnected ? (
+            <Button onClick={handleConnectWallet} className="w-full">
+              Connect Wallet
+            </Button>
+          ) : (
+            <Button
+              onClick={handleList}
+              disabled={isPending || isConfirming}
+              className="w-full"
+            >
+              {isPending || isConfirming ? "Processing..." : "List NFT"}
+            </Button>
+          )}
         </DialogFooter>
+
+        {errorMessage && (
+          <p className="text-sm text-red-600 mt-2">Error: {errorMessage}</p>
+        )}
 
         {isConfirmed && (
           <p className="text-sm text-green-600 mt-2">

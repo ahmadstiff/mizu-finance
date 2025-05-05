@@ -3,7 +3,7 @@ import { mizuMarketplaceAbi } from "@/lib/Abis/mizuMarketplace";
 import { mizuMarketplace } from "@/contstants/addresses";
 
 export function useListNft() {
-  const { data: txHash, isPending, writeContract } = useWriteContract();
+  const { data: txHash, isPending, writeContract, error } = useWriteContract();
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
     useWaitForTransactionReceipt({
@@ -25,21 +25,11 @@ export function useListNft() {
     minPurchase: bigint;
     paymentToken: `0x${string}`;
   }) => {
-    const DECIMALS = BigInt(10 ** 8);
-    const formattedPriceUnit = priceUnit * DECIMALS;
-    const formattedMinPurchase = minPurchase * DECIMALS;
     await writeContract({
       abi: mizuMarketplaceAbi,
       address: mizuMarketplace,
       functionName: "listERC6960",
-      args: [
-        tokenId,
-        subId,
-        fragments,
-        formattedPriceUnit,
-        formattedMinPurchase,
-        paymentToken,
-      ],
+      args: [tokenId, subId, fragments, priceUnit, minPurchase, paymentToken],
     });
   };
 
@@ -49,5 +39,6 @@ export function useListNft() {
     isPending,
     isConfirming,
     isConfirmed,
+    error,
   };
 }

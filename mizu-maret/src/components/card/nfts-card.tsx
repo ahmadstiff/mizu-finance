@@ -13,67 +13,82 @@ const NftsCard = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-wrap gap-4 justify-start mt-4 max-w-full mx-4">
-        {[...Array(3)].map((_, index) => (
-          <Card
-            key={index}
-            className="w-[300px] rounded-sm h-[340px] text-white border-2 border-gray-200 overflow-hidden shadow-lg"
-          >
-            <CardContent className="p-0 flex flex-col h-full">
-              <Skeleton className="w-full h-64 bg-gray-300" /> {/* Image */}
-              <div className="bg-white p-4 flex flex-col gap-2">
-                <Skeleton className="h-6 w-3/4 bg-gray-400" /> {/* Title */}
-                <div className="flex justify-between">
-                  <Skeleton className="h-5 w-1/3 bg-gray-400" /> {/* Price */}
-                  <Skeleton className="h-5 w-1/4 bg-gray-400" /> {/* Category */}
+      <div className="container mx-auto px-4 py-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+          {[...Array(5)].map((_, index) => (
+            <Card
+              key={index}
+              className="rounded-lg h-[380px] text-white border border-gray-200 overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl"
+            >
+              <CardContent className="p-0 flex flex-col h-full">
+                <Skeleton className="w-full h-64 bg-gray-200" /> {/* Image */}
+                <div className="bg-white p-4 flex flex-col gap-2">
+                  <Skeleton className="h-6 w-3/4 bg-gray-200" /> {/* Title */}
+                  <div className="flex justify-between mt-2">
+                    <Skeleton className="h-5 w-1/3 bg-gray-200" /> {/* Price */}
+                    <Skeleton className="h-5 w-1/4 bg-gray-200" />{" "}
+                    {/* Category */}
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
     );
   }
 
-  if (error) return <div>Error: {error}</div>;
+  if (error)
+    return (
+      <div className="container mx-auto px-4 py-6 text-red-500 text-center">
+        Error loading NFTs: {error}
+      </div>
+    );
 
   return (
-    <div className="flex flex-wrap gap-4 justify-start mt-4 max-w-full mx-4">
-      {assets.map((asset) => (
-        <Card
-          key={asset.id}
-          className="w-[300px] rounded-sm h-[380px] bg-white text-white border-2 border-gray-200 overflow-hidden shadow-lg"
-          onMouseEnter={() => setHoveredId(asset.id)}
-          onMouseLeave={() => setHoveredId(null)}
-        >
-          <CardContent className="p-0 flex flex-col flex-1">
-            <div className="relative w-full flex items-center justify-center overflow-hidden mx-auto">
-              <Image
-                src={hoveredId === asset.id ? asset.imageUrl : asset.thumbnail}
-                alt={asset.title}
-                className="object-contain w-full h-64 rounded-sm transition-all duration-300"
-                width={256}
-                height={256}
-              />
-            </div>
-            <Link href={`/asset-detail/${asset.id}`}>
-              <div className="bg-white text-gray-800 mt-4 p-4 rounded-b-sm flex flex-col gap-2 cursor-pointer ">
-                <div className="text-xl text-gray-700 font-semibold">
-                  {asset.title}
+    <div className="container mx-auto px-4 py-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+        {assets.slice(0, 5).map((asset) => (
+          <Link
+            href={`/asset-detail/${asset.id}`}
+            key={asset.id}
+            className="block"
+          >
+            <Card
+              className="rounded-lg h-[380px] bg-white text-white border border-gray-200 overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl"
+              onMouseEnter={() => setHoveredId(asset.id)}
+              onMouseLeave={() => setHoveredId(null)}
+            >
+              <CardContent className="p-0 flex flex-col h-full">
+                <div className="relative w-full h-64 overflow-hidden">
+                  <Image
+                    src={
+                      hoveredId === asset.id ? asset.imageUrl : asset.thumbnail
+                    }
+                    alt={asset.title}
+                    className="object-cover w-full h-full transition-all duration-500 ease-in-out "
+                    width={300}
+                    height={300}
+                  />
                 </div>
-                <div className="flex justify-between">
-                  <div className="text-lg font-medium">
-                    {asset.price} {asset.currency}
-                  </div>
-                  <div className="text-md text-gray-600">
-                    {asset.category}
+                <div className="bg-white text-gray-800 p-4 flex flex-col gap-2 flex-grow">
+                  <h3 className="text-lg font-semibold text-gray-800 line-clamp-1">
+                    {asset.title}
+                  </h3>
+                  <div className="flex justify-between items-center mt-1">
+                    <div className="text-lg font-medium text-gray-900">
+                      {asset.price} {asset.currency}
+                    </div>
+                    <div className="text-sm bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+                      {asset.category}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Link>
-          </CardContent>
-        </Card>
-      ))}
+              </CardContent>
+            </Card>
+          </Link>
+        ))}
+      </div>
     </div>
   );
 };

@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input"; // pastikan kamu punya komponen ini
+import { Input } from "@/components/ui/input"; 
 import useBuyNft from "@/hooks/useBuyNft";
 
 const BuyDialog = ({ triggerButton }: { triggerButton?: React.ReactNode }) => {
