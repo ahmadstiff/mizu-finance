@@ -8,7 +8,7 @@ import realestate from '../../public/realestate.jpg'
 import royalty from '../../public/royality.jpg'
 import stocks from '../../public/stocks.jpg'
 
-export type Category = 'collectible' | 'comodity' | 'credit' | 'membership' | 'realestate' | 'royality' | 'stocks';
+export type Category = 'collectible' | 'comodity' | 'credit' | 'membership' | 'real estate' | 'royality' | 'stocks';
 
 interface CategoryIconsProps {
     selectedCategory: Category | null;
@@ -16,12 +16,12 @@ interface CategoryIconsProps {
 }
 
 const categories: { id: Category; label: string; icon: string }[] = [
-    { id: 'collectible', label: 'Collectibles', icon: collectible },
-    { id: 'comodity', label: 'Commodities', icon: commodity.src },
+    { id: 'collectible', label: 'Collectible', icon: collectible },
+    { id: 'comodity', label: 'Commodity', icon: commodity.src },
     { id: 'credit', label: 'Credit', icon: credit.src },
     { id: 'membership', label: 'Membership', icon: membership.src },
-    { id: 'realestate', label: 'Real Estate', icon: realestate.src },
-    { id: 'royality', label: 'Royalities', icon: royalty.src },
+    { id: 'real estate', label: 'Real Estate', icon: realestate.src },
+    { id: 'royality', label: 'Royality', icon: royalty.src },
     { id: 'stocks', label: 'Stocks', icon: stocks.src },
 ];
 
