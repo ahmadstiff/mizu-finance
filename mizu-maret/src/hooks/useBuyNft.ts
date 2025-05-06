@@ -29,7 +29,7 @@ function useBuyNft() {
     amount: number;
     listingId: bigint;
   }) => {
-    const parseAmount = BigInt(amount * 100 ** 6); // assumed USDC has 6 decimals
+    const parseAmount = BigInt(amount * 10 ** 10); // assumed USDC has 6 decimals
 
     // Approve
     await approveNft({
