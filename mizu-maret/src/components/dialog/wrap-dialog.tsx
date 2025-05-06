@@ -49,14 +49,14 @@ export default function WrapAssetDialog({ trigger }: WrapAssetDialogProps) {
         <div className="bg-white">
           <div className="flex flex-col items-center p-6">
             <Image
-              src="/your-image-path.png"
+              src="https://res.cloudinary.com/dn5jtkayx/image/upload/v1746528314/burjkhalifa0_tztdun.png"
               alt="Asset"
               width={200}
               height={300}
               className="rounded-md object-contain"
             />
             <DialogTitle className="mt-4 text-lg font-semibold text-gray-900">
-              Taylor Swift Album
+              Burj Khalifa Card
             </DialogTitle>
           </div>
 
