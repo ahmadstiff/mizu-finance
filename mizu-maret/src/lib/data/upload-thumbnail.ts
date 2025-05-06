@@ -1,20 +1,29 @@
-export const uploadToCloudinary = async (file: File): Promise<string> => {
-  const data = new FormData();
-  data.append("file", file);
-  data.append("upload_preset", "z6euuqyl");
+export const uploadToCloudinary = async (
+  file: File,
+  folder: string = "Mizu-Maret"
+): Promise<string> => {
+  const signRes = await fetch(`/api/sign-cloudinary?folder=${folder}`);
+  const { signature, timestamp, apiKey, cloudName } = await signRes.json();
 
-  const res = await fetch(
-    "https://api.cloudinary.com/v1_1/dv3z889zh/image/upload",
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("api_key", apiKey);
+  formData.append("timestamp", timestamp.toString());
+  formData.append("signature", signature);
+  formData.append("folder", folder);
+
+  const uploadRes = await fetch(
+    `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
     {
       method: "POST",
-      body: data,
+      body: formData,
     }
   );
 
-  const result = await res.json();
+  const result = await uploadRes.json();
 
-  if (!res.ok || !result.secure_url) {
-    throw new Error("Failed to upload image.");
+  if (!uploadRes.ok || !result.secure_url) {
+    throw new Error(result.error?.message || "Failed to upload image.");
   }
 
   return result.secure_url;

@@ -28,15 +28,23 @@ const initialFormData: NftFormData = {
   thumbnail: "",
   imageUrl: "",
   price: "",
-  currency: "ETH",
-  category: "commodity",
-  status: "LISTED",
+  currency: "USDC",
+  category: "",
+  status: "Available",
 };
 
 export default function NftForm() {
   const [formData, setFormData] = useState<NftFormData>(initialFormData);
   const [uploading, setUploading] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [imageOption, setImageOption] = useState<"url" | "upload">("url");
   const { address } = useAccount();
+
+  useEffect(() => {
+    if (address) {
+      setFormData((prev) => ({ ...prev, owner: address }));
+    }
+  }, [address]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -49,20 +57,14 @@ export default function NftForm() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  useEffect(() => {
-    if (address) {
-      setFormData((prev) => ({ ...prev, owner: address }));
-    }
-  }, [address]);
-
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
     setUploading(true);
     try {
-      const url = await uploadToCloudinary(acceptedFiles[0]);
+      const url = await uploadToCloudinary(acceptedFiles[0], "nft-thumbnails");
       setFormData((prev) => ({ ...prev, thumbnail: url }));
     } catch (err) {
-      alert("Upload failed");
+      alert("Upload thumbnail failed");
     } finally {
       setUploading(false);
     }
@@ -80,6 +82,11 @@ export default function NftForm() {
 
     if (!formData.thumbnail) {
       alert("Please upload a thumbnail first.");
+      return;
+    }
+
+    if (!formData.imageUrl) {
+      alert("Please provide or upload an image.");
       return;
     }
 
@@ -162,13 +169,70 @@ export default function NftForm() {
         dropzone={dropzone}
       />
 
-      <Input
-        name="imageUrl"
-        value={formData.imageUrl}
-        onChange={handleChange}
-        required
-        placeholder="Image URL (IPFS)"
-      />
+      {/* --- Image input via IPFS URL or Cloudinary Upload --- */}
+      <div className="space-y-2">
+        <div className="flex gap-4 items-center">
+          <label>
+            <input
+              type="radio"
+              value="url"
+              checked={imageOption === "url"}
+              onChange={() => setImageOption("url")}
+            />
+            <span className="ml-2">Use IPFS URL</span>
+          </label>
+          <label>
+            <input
+              type="radio"
+              value="upload"
+              checked={imageOption === "upload"}
+              onChange={() => setImageOption("upload")}
+            />
+            <span className="ml-2">Upload to Cloudinary</span>
+          </label>
+        </div>
+
+        {imageOption === "url" ? (
+          <Input
+            name="imageUrl"
+            value={formData.imageUrl}
+            onChange={handleChange}
+            required
+            placeholder="Image URL (e.g., IPFS)"
+          />
+        ) : (
+          <div>
+            <Input
+              type="file"
+              accept="image/*"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                setUploadingImage(true);
+                try {
+                  const url = await uploadToCloudinary(file, "nft-images");
+                  setFormData((prev) => ({ ...prev, imageUrl: url }));
+                } catch (err) {
+                  alert("Cloudinary upload failed");
+                } finally {
+                  setUploadingImage(false);
+                }
+              }}
+            />
+            {uploadingImage && (
+              <p className="text-sm text-gray-500 mt-1">Uploading...</p>
+            )}
+            {formData.imageUrl && (
+              <img
+                src={formData.imageUrl}
+                alt="Uploaded preview"
+                className="mt-2 w-32"
+              />
+            )}
+          </div>
+        )}
+      </div>
+
       <div className="grid grid-cols-2 gap-4">
         <Input
           type="number"
@@ -216,9 +280,9 @@ export default function NftForm() {
           <SelectValue placeholder="Status" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="LISTED">LISTED</SelectItem>
-          <SelectItem value="Available">Available</SelectItem>
-          <SelectItem value="Wrapped">Wrapped</SelectItem>
+          <SelectItem value="AVAILABLE">Available</SelectItem>
+          <SelectItem value="UNLISTED">Unlisted</SelectItem>
+          <SelectItem value="LISTED">Listed</SelectItem>
         </SelectContent>
       </Select>
       <Button type="submit" className="mt-4">
