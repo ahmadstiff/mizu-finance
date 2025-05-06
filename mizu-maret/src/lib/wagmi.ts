@@ -3,16 +3,16 @@ import { getDefaultConfig } from "@rainbow-me/rainbowkit";
 import { defineChain } from "viem";
 
 export const pharosChain = defineChain({
-  id: 11155420,
+  id: 50002,
   name: "Pharos Devnet",
   nativeCurrency: { name: "ETH", symbol: "ETH", decimals: 18 },
   rpcUrls: {
-    default: { http: ["https://sepolia.optimism.io"] },
+    default: { http: ["https://devnet.dplabs-internal.com/"] },
   },
   blockExplorers: {
     default: {
       name: "Blockscout",
-      url: "https://optimism-sepolia.blockscout.com",
+      url: "https://pharosscan.xyz/",
     },
   },
   testnet: true,
