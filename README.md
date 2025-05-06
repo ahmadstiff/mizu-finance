@@ -4,7 +4,7 @@ Welcome to Mizumaret, the global marketplace for tokenized real-world assets (RW
 
 [Go to site](https://mizu-maret.vercel.app/)
 
-![image]()
+![image](https://res.cloudinary.com/dzev0az08/image/upload/v1746520439/Screenshot_2025-05-06_153210_jnzfgb.png)
 
 ## Introduction
 
