@@ -1,8 +1,7 @@
-import NftsCard from "@/components/card/nfts-card";
 import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-
+import NftsCard from "@/components/card/nfts-card";
 const RecommendationAssets = () => {
   return (
     <div>
@@ -16,7 +15,7 @@ const RecommendationAssets = () => {
           </Button>
         </Link>
       </div>
-      <NftsCard />
+     <NftsCard />
     </div>
   );
 };

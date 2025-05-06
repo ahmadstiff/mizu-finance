@@ -30,7 +30,7 @@ const initialFormData: NftFormData = {
   price: "",
   currency: "USDC",
   category: "",
-  status: "Available",
+  status: "AVAILABLE",
 };
 
 export default function NftForm() {

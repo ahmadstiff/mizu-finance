@@ -1,7 +1,8 @@
-import NftsCard from "@/components/card/nfts-card";
+
 import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import RoyalityCard from "@/components/card/royality-card";
 
 const RecommendationRoyality = () => {
   return (
@@ -16,7 +17,7 @@ const RecommendationRoyality = () => {
           </Button>
         </Link>
       </div>
-      <NftsCard />
+      <RoyalityCard />
     </div>
   );
 };
