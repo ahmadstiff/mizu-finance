@@ -67,7 +67,7 @@ export default function ListingAssetDialog({
         collectionId: BigInt(subId),
         price: BigInt(priceUnit) * DECIMALS,
         fragments: BigInt(fragments),
-        royaltyPercentage: BigInt(0), // default? bisa disesuaikan
+        royaltyPercentage: BigInt(minPurchase), // default? bisa disesuaikan
         royaltyReceiver: address,
       });
     } catch (error) {
