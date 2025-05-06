@@ -1,5 +1,5 @@
 import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
-import { mizuMarketplace,property } from "@/contstants/addresses";
+import { mizuMarketplace,property } from "@/constants/addresses";
 import { mizuMarketplaceAbi } from "@/lib/Abis/mizuMarketplace";
 import { propertyAbi } from "@/lib/Abis/property";
 

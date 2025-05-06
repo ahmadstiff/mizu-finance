@@ -10,8 +10,6 @@ import { usePathname } from "next/navigation";
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
-
-  // Function to check if the current path matches the link
   const isActive = (path : any) => {
     return pathname === path;
   };

@@ -1,4 +1,4 @@
-import heroImages from "@/contstants/image/hero-image";
+import heroImages from "@/constants/image/hero-image";
 
 const HeroImage = () => {
   const displayImages = heroImages.slice(0, 4);
